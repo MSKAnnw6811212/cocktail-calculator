@@ -16,33 +16,9 @@ body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.5 var(--font-bod
 
 /* Brand & Typography */
 h1, h2, h3, .brand { font-family: var(--font-head); }
-
-.logo-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 4px;
-}
-
-.logo-icon {
-  background: var(--primary);
-  color: #fff;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-}
-
-.logo-text {
-  font-family: var(--font-head);
-  font-weight: 700;
-  font-size: 20px;
-  color: var(--primary);
-  letter-spacing: -0.5px;
-}
-
+.logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.logo-icon { background: var(--primary); color: #fff; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
+.logo-text { font-family: var(--font-head); font-weight: 700; font-size: 20px; color: var(--primary); letter-spacing: -0.5px; }
 h1 { margin:0; font-size: 24px; color: var(--txt); font-weight: 400; }
 
 .container{max-width:1100px;margin:auto;padding:16px}
@@ -66,8 +42,12 @@ body.dark .badge{background:#1f2937}
 .badge.allergen{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
 body.dark .badge.allergen{background:#450a0a;color:#fca5a5;border-color:#7f1d1d}
 
-.pantry{columns:2 200px; padding-top:10px}
-.pantry label{display:flex;align-items:center;gap:8px;flex-direction:row;margin-bottom:6px; font-weight:400; text-transform:none;}
+/* NEW: Improved Pantry Layout */
+.pantry-group { margin-bottom: 16px; break-inside: avoid; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+.pantry-group strong { display: block; margin-bottom: 8px; color: var(--primary); font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+.pantry-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.pantry-item { flex-direction: row; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; padding: 4px; border-radius: 4px; }
+.pantry-item:hover { background: var(--bg); }
 
 .ingredients{font-size:15px;line-height:1.6; background:var(--bg); padding:12px; border-radius:8px;}
 .meta{font-size:13px;color:var(--muted);font-weight:500;}
@@ -76,7 +56,6 @@ body.dark .badge.allergen{background:#450a0a;color:#fca5a5;border-color:#7f1d1d}
 button.primary{background:var(--primary);color:#fff;border:0;border-radius:8px;padding:8px 16px;cursor:pointer;font-weight:600;font-family:var(--font-body);}
 button.link{background:transparent;border:0;color:var(--primary);cursor:pointer}
 
-/* Bar Back Styles */
 .bb-table{width:100%;border-collapse:collapse;margin-top:10px}
 .bb-table th,.bb-table td{border:1px solid var(--border);padding:10px;text-align:left}
 .bb-table th { background: var(--bg); font-weight:600; font-size:14px; }
@@ -86,21 +65,9 @@ button.link{background:transparent;border:0;color:var(--primary);cursor:pointer}
 .check-label { flex-direction: row; align-items: center; min-width: auto; text-transform: none; color: var(--txt); }
 .check-label span { text-transform: none; }
 
-.clear-btn {
-    position: absolute;
-    right: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: transparent;
-    border: none;
-    font-size: 20px;
-    color: var(--muted);
-    cursor: pointer;
-    padding: 0 5px;
-}
+.clear-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: transparent; border: none; font-size: 20px; color: var(--muted); cursor: pointer; padding: 0 5px; }
 .clear-btn:hover { color: var(--fail); }
 
-/* Print Styles */
 @media print {
   body{background:#fff;color:#000}
   header, .controls, .grid, footer, .bb-actions, .checkbox-row {display:none !important}
