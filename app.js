@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (International) v2.1 */
+/* app.js - Pixel & Pour Cocktail Calculator (International) v2.2 */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -10,6 +10,7 @@ const base = $('#base');
 const units = $('#units');
 const langSelect = $('#langSelect'); 
 const pantryBox = $('#pantry');
+const clearPantryBtn = $('#clearPantry'); // NEW
 const results = $('#results');
 const scaleMode = $('#scaleMode');
 const scaleValue = $('#scaleValue');
@@ -32,24 +33,14 @@ let CURRENT_LANG = 'en'; // Default
 const DICT = {
     ui: {
         en: { 
-            servings: "Servings", 
-            target_ml: "Target ml (total)", 
-            search_ph: "Type to search or browse...", 
-            base_all: "All Bases",
-            add_sheet: "+ Shopping List",
-            glass: "Glass",
-            method: "Method",
-            ingredients: "Ingredients"
+            servings: "Servings", target_ml: "Target ml (total)", 
+            search_ph: "Type to search or browse...", base_all: "All Bases",
+            add_sheet: "+ Shopping List", glass: "Glass", method: "Method", ingredients: "Ingredients"
         },
         de: { 
-            servings: "Portionen", 
-            target_ml: "Zielmenge (ml)", 
-            search_ph: "Tippen zum Suchen...", 
-            base_all: "Alle Basen",
-            add_sheet: "+ Einkaufsliste",
-            glass: "Glas",
-            method: "Methode",
-            ingredients: "Zutaten"
+            servings: "Portionen", target_ml: "Zielmenge (ml)", 
+            search_ph: "Tippen zum Suchen...", base_all: "Alle Basen",
+            add_sheet: "+ Einkaufsliste", glass: "Glas", method: "Methode", ingredients: "Zutaten"
         }
     },
     ing: {
@@ -93,7 +84,7 @@ async function initData() {
     SUBS = sData.substitutions;
     GENERICS = sData.generic_families;
 
-    populateDatalist(); // Initial population
+    populateDatalist();
     renderPantry();
     render();
     renderBarBack();
@@ -142,16 +133,33 @@ function scaledMl(ml) {
   return ml * n;
 }
 
+function matchesSelection(ingName) {
+  if (selected.has(ingName)) return true;
+  // Check substitutions
+  const sub = SUBS[ingName];
+  if (sub && sub.some(s => selected.has(s))) return true;
+  // Check generic families
+  for (const [label, pattern] of Object.entries(GENERICS)) {
+    if (!selected.has(label)) continue;
+    try {
+      if (new RegExp(pattern, 'i').test(ingName)) return true;
+    } catch (e) { }
+  }
+  return false;
+}
+
+function makeable(r) {
+  if (selected.size === 0) return true; // If pantry is empty, show everything
+  // Otherwise, strict match: MUST have all non-optional ingredients
+  return r.ingredients.every(i => i.optional || matchesSelection(i.name));
+}
+
 // -- Rendering --
 function populateDatalist() {
     const bv = base.value;
-    
-    // Filter recipes based on the selected base spirit
     const filteredRecipes = RECIPES.filter(r => 
         bv === 'All' || (r.base && r.base.includes(bv))
     );
-
-    // Create options only for the filtered recipes
     const opts = filteredRecipes.map(r => `<option value="${r.name}"></option>`).sort();
     recipeList.innerHTML = opts.join('');
 }
@@ -164,12 +172,20 @@ function renderPantry() {
     const type = typeOf(ing);
     if(groups[type]) groups[type].push(ing); else groups['Mixer/NA'].push(ing);
   }
+  // Add Generics
+  for (const label of Object.keys(GENERICS)) {
+      const type = typeOf(label);
+      if(groups[type]) groups[type].push(label);
+  }
 
   pantryBox.innerHTML = Object.entries(groups).map(([g, list]) => {
     if(list.length === 0) return '';
     const uniqueList = [...new Set(list)].sort();
     return `<div class="card" style="break-inside: avoid;"><strong>${g}</strong><div style="display:flex;flex-direction:column;gap:4px;margin-top:4px;">` +
-      uniqueList.map(name => `<label><input type="checkbox" value="${name}"> ${t(name, 'ing')}</label>`).join('') +
+      uniqueList.map(name => {
+         const isChecked = selected.has(name) ? 'checked' : '';
+         return `<label><input type="checkbox" value="${name}" ${isChecked}> ${t(name, 'ing')}</label>`;
+      }).join('') +
       `</div></div>`;
   }).join('');
   
@@ -190,18 +206,33 @@ function render() {
 
   let list = RECIPES.filter(r => 
     (bv === 'All' || (r.base && r.base.includes(bv))) &&
-    (qv === '' || r.name.toLowerCase().includes(qv))
+    (qv === '' || r.name.toLowerCase().includes(qv)) &&
+    makeable(r)
   );
+
+  if(list.length === 0) {
+      results.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--muted);">
+        <h3>No matches found</h3>
+        <p>Try adding more ingredients to your pantry (Sugar, Lemon, etc.) or clearing the selection.</p>
+      </div>`;
+      return;
+  }
 
   results.innerHTML = list.map(r => {
     const ings = r.ingredients.map(i => {
       const ml = scaledMl(i.qtyMl || 0);
       const [v, u] = convertQty(ml);
-      const label = i.label ? ` (${i.label})` : '';
+      const label = i.label ? ` <span style="font-size:0.9em;color:var(--muted)">(${i.label})</span>` : '';
       const top = i.top ? ' (top up)' : '';
       const name = t(i.name, 'ing'); 
       const qtyDisplay = i.qtyMl ? `<span class="qty">${v} ${u}</span>` : '—';
-      return `<div>${qtyDisplay} ${name}${label}${top}</div>`;
+      
+      // Highlight missing ingredients if pantry is active
+      const isMissing = selected.size > 0 && !i.optional && !matchesSelection(i.name);
+      const style = isMissing ? 'color:var(--fail); font-weight:bold;' : '';
+      const missingIcon = isMissing ? ' ⚠️' : '';
+
+      return `<div style="${style}">${qtyDisplay} ${name}${label}${top}${missingIcon}</div>`;
     }).join('');
 
     const icon = getGlassIcon(r.glass);
@@ -211,8 +242,8 @@ function render() {
         <h3 style="margin:0;">${icon} ${r.name}</h3>
       </div>
       <div class="meta">${t('method')}: ${r.method} • ${t('glass')}: ${r.glass}</div>
-      <div class="ingredients" style="margin:10px 0;padding:10px;background:var(--bg);border-radius:8px;">${ings}</div>
-      <div style="font-style:italic;font-size:14px;margin-bottom:10px;">${r.instructions}</div>
+      <div class="ingredients" style="margin:10px 0;padding:12px;background:var(--bg);border-radius:8px;">${ings}</div>
+      <div style="font-style:italic;font-size:14px;margin-bottom:10px;line-height:1.5;">${r.instructions}</div>
       <div style="margin-top:auto;">
         <button class="primary" data-add="${r.id}">${t('add_sheet')}</button>
       </div>
@@ -255,7 +286,6 @@ function renderBarBack() {
 
   bbTable.innerHTML = "";
   Array.from(totals.entries()).sort().forEach(([name, ml]) => {
-    // BOTTLE LOGIC: If checkbox checked, show Bottle count. Else show Total ML.
     let mlDisplay = "";
     if (roundBottles.checked) {
         const btls = Math.ceil(ml / 750);
@@ -263,10 +293,8 @@ function renderBarBack() {
     } else {
         mlDisplay = `${Math.round(ml)} ml`;
     }
-
     const cl = (ml / 10).toFixed(1);
     const oz = (ml / 29.57).toFixed(1);
-    
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${t(name, 'ing')}</td><td>${mlDisplay}</td><td>${cl} cl / ${oz} oz</td>`;
     bbTable.appendChild(tr);
@@ -275,16 +303,20 @@ function renderBarBack() {
 
 // -- Listeners --
 q.addEventListener('input', render);
-base.addEventListener('change', () => { 
-    q.value = ""; 
-    populateDatalist(); // NEW: Refresh dropdown when base changes
-    render(); 
-});
+base.addEventListener('change', () => { q.value = ""; populateDatalist(); render(); });
 units.addEventListener('change', render);
 scaleMode.addEventListener('change', render);
 scaleValue.addEventListener('input', render);
 langSelect.addEventListener('change', () => { CURRENT_LANG = langSelect.value; renderPantry(); render(); renderBarBack(); });
 includeGarnish.addEventListener('change', renderBarBack);
 roundBottles.addEventListener('change', renderBarBack);
+
+// NEW: Clear Pantry Listener
+clearPantryBtn.addEventListener('click', () => {
+    selected.clear();
+    // Uncheck all checkboxes visually
+    $$('#pantry input[type="checkbox"]').forEach(box => box.checked = false);
+    render();
+});
 
 initData();
