@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (v3.0 - Print Fixed) */
+/* app.js - Pixel & Pour Cocktail Calculator (v3.0 Final) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -21,7 +21,7 @@ const bbTable = $('#bbTable tbody');
 const bbList = $('#bbList');
 const includeGarnish = $('#includeGarnish');
 const roundBottles = $('#roundBottles');
-const printBtn = $('#printSheet'); // Fixed: Selected the print button
+const printBtn = $('#printSheet'); 
 
 // -- State --
 let RECIPES = [];
@@ -296,7 +296,6 @@ function renderBarBack() {
   Array.from(totals.entries()).sort().forEach(([name, ml]) => {
     let mlDisplay = "";
     if (roundBottles.checked) {
-        // Round to 750ml bottles (logic check: 750ml is standard)
         const btls = Math.ceil(ml / 750);
         mlDisplay = `<strong>${btls}</strong> x 750ml btls`;
     } else {
@@ -322,7 +321,7 @@ roundBottles.addEventListener('change', renderBarBack);
 clearPantryBtn.addEventListener('click', () => { selected.clear(); $$('#pantry input[type="checkbox"]').forEach(box => box.checked = false); render(); });
 clearSearchBtn.addEventListener('click', () => { q.value = ""; q.focus(); render(); });
 
-// THE FIX: Adding the Print Listener!
+// Print Button Logic
 if(printBtn) printBtn.addEventListener('click', () => window.print());
 
 initData();
