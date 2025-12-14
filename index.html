@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#ffffff" />
+  <title>Pixel & Pour — Cocktail Calculator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="container header">
+    <div class="brand">
+      <span class="logo">Pixel & Pour</span>
+      <h1>Cocktail Calculator</h1>
+    </div>
+    <nav class="nav">
+      <button id="themeToggle" class="theme-toggle button primary" title="Toggle theme">🌗 Theme</button>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="controls card">
+      <div class="row">
+        <label>
+          <span>Language / Sprache</span>
+          <select id="langSelect">
+            <option value="en">🇺🇸 English</option>
+            <option value="de">🇩🇪 Deutsch</option>
+          </select>
+        </label>
+        
+        <label>
+          <span>Search / Suche</span>
+          <input id="q" placeholder="e.g. Negroni..." />
+        </label>
+        
+        <label>
+          <span>Browse All / Alle</span>
+          <select id="recipeSelect">
+            <option value="">Loading...</option>
+          </select>
+        </label>
+        
+        <label>
+          <span>Base Spirit</span>
+          <select id="base">
+            <option value="All">All / Alle</option>
+            <option>Gin</option>
+            <option>Rum</option>
+            <option>Whiskey</option>
+            <option>Vodka</option>
+            <option>Tequila</option>
+            <option>Non-Alcoholic</option>
+          </select>
+        </label>
+
+        <label>
+          <span>Units / Einheit</span>
+          <select id="units">
+            <option value="ml">Milliliters (ml)</option>
+            <option value="cl">Centiliters (cl)</option>
+            <option value="oz">Ounces (oz)</option>
+          </select>
+        </label>
+      </div>
+
+      <details>
+        <summary>Pantry — what do you have at home?</summary>
+        <div id="pantry" class="pantry"></div>
+      </details>
+
+      <div class="row scale-row">
+        <label>
+          <span>Scale by</span>
+          <select id="scaleMode">
+            <option value="servings">Servings / Portionen</option>
+            <option value="ml">Target ml (Total)</option>
+          </select>
+        </label>
+        <label>
+          <span id="scaleLabel">Servings</span>
+          <input id="scaleValue" type="number" value="1" min="0.5" step="0.5" />
+        </label>
+      </div>
+    </section>
+
+    <section id="results" class="grid"></section>
+
+    <section id="barback" class="card">
+      <h2>Shopping List / Bar-back</h2>
+      <div class="bb-actions">
+        <button id="printSheet" class="primary">Print</button>
+        <span class="bb-list" id="bbList"></span>
+      </div>
+      <div class="checkbox-row">
+        <label><input type="checkbox" id="includeGarnish" checked> Include garnish</label>
+        <label><input type="checkbox" id="roundBottles"> Round to 750ml bottles</label>
+      </div>
+      <table class="bb-table" id="bbTable">
+        <thead>
+          <tr><th>Ingredient</th><th>Total (ml)</th><th>As (cl/oz)</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <footer class="container footer">
+    <small>© Pixel & Pour — International Edition</small>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
