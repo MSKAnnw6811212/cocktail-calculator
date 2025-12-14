@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (International) v2 */
+/* app.js - Pixel & Pour Cocktail Calculator (International) v2.1 */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -93,7 +93,7 @@ async function initData() {
     SUBS = sData.substitutions;
     GENERICS = sData.generic_families;
 
-    populateDatalist(); // Populate the search dropdown
+    populateDatalist(); // Initial population
     renderPantry();
     render();
     renderBarBack();
@@ -144,8 +144,15 @@ function scaledMl(ml) {
 
 // -- Rendering --
 function populateDatalist() {
-    // Fills the "Smart Search" dropdown options
-    const opts = RECIPES.map(r => `<option value="${r.name}"></option>`).sort();
+    const bv = base.value;
+    
+    // Filter recipes based on the selected base spirit
+    const filteredRecipes = RECIPES.filter(r => 
+        bv === 'All' || (r.base && r.base.includes(bv))
+    );
+
+    // Create options only for the filtered recipes
+    const opts = filteredRecipes.map(r => `<option value="${r.name}"></option>`).sort();
     recipeList.innerHTML = opts.join('');
 }
 
@@ -268,7 +275,11 @@ function renderBarBack() {
 
 // -- Listeners --
 q.addEventListener('input', render);
-base.addEventListener('change', () => { q.value = ""; render(); });
+base.addEventListener('change', () => { 
+    q.value = ""; 
+    populateDatalist(); // NEW: Refresh dropdown when base changes
+    render(); 
+});
 units.addEventListener('change', render);
 scaleMode.addEventListener('change', render);
 scaleValue.addEventListener('input', render);
