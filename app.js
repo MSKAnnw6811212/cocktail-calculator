@@ -1,13 +1,13 @@
-/* app.js - Pixel & Pour Cocktail Calculator (International) */
+/* app.js - Pixel & Pour Cocktail Calculator (International) v2 */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
 
 // -- DOM Elements --
-const q = $('#q');
+const q = $('#q'); // Input field
+const recipeList = $('#recipeList'); // Datalist
 const base = $('#base');
 const units = $('#units');
-const recipeSelect = $('#recipeSelect'); 
 const langSelect = $('#langSelect'); 
 const pantryBox = $('#pantry');
 const results = $('#results');
@@ -34,7 +34,7 @@ const DICT = {
         en: { 
             servings: "Servings", 
             target_ml: "Target ml (total)", 
-            search_ph: "Search cocktails...", 
+            search_ph: "Type to search or browse...", 
             base_all: "All Bases",
             add_sheet: "+ Shopping List",
             glass: "Glass",
@@ -44,7 +44,7 @@ const DICT = {
         de: { 
             servings: "Portionen", 
             target_ml: "Zielmenge (ml)", 
-            search_ph: "Suche...", 
+            search_ph: "Tippen zum Suchen...", 
             base_all: "Alle Basen",
             add_sheet: "+ Einkaufsliste",
             glass: "Glas",
@@ -52,7 +52,6 @@ const DICT = {
             ingredients: "Zutaten"
         }
     },
-    // Common Ingredients Map (German -> English)
     ing: {
         "Zitronensaft": "Lemon Juice", "Limettensaft": "Lime Juice", "Zuckersirup": "Sugar Syrup",
         "Sodawasser": "Soda Water", "Weißer Rum": "White Rum", "Dunkler Rum": "Dark Rum",
@@ -64,7 +63,8 @@ const DICT = {
         "Staudensellerie": "Celery", "Worcestershiresauce": "Worcestershire Sauce",
         "Pfeffer": "Pepper", "Salz": "Salt", "Zitrone": "Lemon", "Brauner Rum": "Aged Rum",
         "Cola": "Cola", "Tonic Water": "Tonic Water", "Schaumwein": "Sparkling Wine",
-        "Pfirsichpüree": "Peach Puree", "Aperol": "Aperol", "Prosecco": "Prosecco"
+        "Pfirsichpüree": "Peach Puree", "Aperol": "Aperol", "Prosecco": "Prosecco",
+        "Cachaça": "Cachaça", "Grapefruit Soda": "Grapefruit Soda"
     }
 };
 
@@ -93,16 +93,13 @@ async function initData() {
     SUBS = sData.substitutions;
     GENERICS = sData.generic_families;
 
-    populateDropdown();
+    populateDatalist(); // Populate the search dropdown
     renderPantry();
     render();
     renderBarBack();
   } catch (err) {
     console.error(err);
-    results.innerHTML = `<div class="card" style="color:var(--fail); padding:20px;">
-      <h3>Error Loading Data</h3>
-      <p>Ensure cocktails.json and substitutions.json are in the /data folder.</p>
-    </div>`;
+    results.innerHTML = `<div class="card" style="color:var(--fail); padding:20px;">Error Loading Data. Check console.</div>`;
   }
 }
 
@@ -146,9 +143,10 @@ function scaledMl(ml) {
 }
 
 // -- Rendering --
-function populateDropdown() {
-    const opts = RECIPES.map(r => `<option value="${r.id}">${r.name}</option>`).sort();
-    recipeSelect.innerHTML = `<option value="">-- Browse All --</option>` + opts.join('');
+function populateDatalist() {
+    // Fills the "Smart Search" dropdown options
+    const opts = RECIPES.map(r => `<option value="${r.name}"></option>`).sort();
+    recipeList.innerHTML = opts.join('');
 }
 
 function renderPantry() {
@@ -179,20 +177,14 @@ function renderPantry() {
 function render() {
   const qv = q.value.trim().toLowerCase();
   const bv = base.value;
-  const rv = recipeSelect.value;
   
   scaleLabel.textContent = scaleMode.value === 'servings' ? t('servings') : t('target_ml');
   q.placeholder = t('search_ph');
 
-  let list = RECIPES;
-  if (rv) {
-      list = list.filter(r => r.id === rv);
-  } else {
-      list = list.filter(r => 
-        (bv === 'All' || (r.base && r.base.includes(bv))) &&
-        (qv === '' || r.name.toLowerCase().includes(qv))
-      );
-  }
+  let list = RECIPES.filter(r => 
+    (bv === 'All' || (r.base && r.base.includes(bv))) &&
+    (qv === '' || r.name.toLowerCase().includes(qv))
+  );
 
   results.innerHTML = list.map(r => {
     const ings = r.ingredients.map(i => {
@@ -241,6 +233,7 @@ function renderBarBack() {
   bbList.innerHTML = Array.from(barBack.values()).map(({ recipe, servings }) => {
     return `<span class="bb-chip">${recipe.name} × ${servings} <button data-rm="${recipe.id}" class="link" style="color:var(--fail);margin-left:5px;">×</button></span>`;
   }).join('');
+  
   bbList.querySelectorAll('button[data-rm]').forEach(btn => btn.addEventListener('click', () => removeFromBarBack(btn.getAttribute('data-rm'))));
 
   const totals = new Map();
@@ -255,17 +248,27 @@ function renderBarBack() {
 
   bbTable.innerHTML = "";
   Array.from(totals.entries()).sort().forEach(([name, ml]) => {
+    // BOTTLE LOGIC: If checkbox checked, show Bottle count. Else show Total ML.
+    let mlDisplay = "";
+    if (roundBottles.checked) {
+        const btls = Math.ceil(ml / 750);
+        mlDisplay = `<strong>${btls}</strong> x 750ml btls`;
+    } else {
+        mlDisplay = `${Math.round(ml)} ml`;
+    }
+
     const cl = (ml / 10).toFixed(1);
     const oz = (ml / 29.57).toFixed(1);
+    
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${t(name, 'ing')}</td><td>${Math.round(ml)} ml</td><td>${cl} cl</td>`;
+    tr.innerHTML = `<td>${t(name, 'ing')}</td><td>${mlDisplay}</td><td>${cl} cl / ${oz} oz</td>`;
     bbTable.appendChild(tr);
   });
 }
 
-q.addEventListener('input', () => { recipeSelect.value = ""; render(); });
-base.addEventListener('change', () => { recipeSelect.value = ""; render(); });
-recipeSelect.addEventListener('change', () => { q.value = ""; base.value = "All"; render(); });
+// -- Listeners --
+q.addEventListener('input', render);
+base.addEventListener('change', () => { q.value = ""; render(); });
 units.addEventListener('change', render);
 scaleMode.addEventListener('change', render);
 scaleValue.addEventListener('input', render);
