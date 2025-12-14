@@ -7,82 +7,34 @@
         { "name": "Zuckersirup", "qtyMl": 5 },
         { "name": "Angostura Bitters", "qtyMl": 1, "label": "2 dashes" }
       ],
-      "instructions": "Stir all ingredients with ice. Strain over fresh ice. Garnish with orange zest."
+      "instructions": "Place sugar and bitters in glass. Add a splash of water/soda. Add whiskey and ice. Stir for 20-30 seconds until diluted and chilled. Garnish with orange zest."
     },
     {
-      "id": "martini", "name": "Dry Martini", "base": "Gin", "method": "Stir", "glass": "Martini", "difficulty": "Medium",
+      "id": "cuba-libre", "name": "Cuba Libre", "base": "Rum", "method": "Build", "glass": "Highball", "difficulty": "Easy",
       "ingredients": [
-        { "name": "Gin", "qtyMl": 60 },
-        { "name": "Vermouth Dry", "qtyMl": 10 }
+        { "name": "Brauner Rum", "qtyMl": 50 },
+        { "name": "Limettensaft", "qtyMl": 10 },
+        { "name": "Cola", "qtyMl": 120, "top": true }
       ],
-      "instructions": "Stir with ice until very cold. Strain into chilled glass. Garnish with lemon twist or olive."
+      "instructions": "Fill a highball glass with ice. Squeeze in fresh lime juice and drop the wedge in. Pour in the rum. Top with Cola and stir gently to combine."
     },
     {
-      "id": "daiquiri", "name": "Daiquiri", "base": "Rum", "method": "Shake", "glass": "Coupe", "difficulty": "Medium",
-      "ingredients": [
-        { "name": "Weißer Rum", "qtyMl": 60 },
-        { "name": "Limettensaft", "qtyMl": 30 },
-        { "name": "Zuckersirup", "qtyMl": 20 }
-      ],
-      "instructions": "Shake with ice. Fine strain into chilled coupe."
-    },
-    {
-      "id": "margarita", "name": "Margarita", "base": "Tequila", "method": "Shake", "glass": "Coupe", "difficulty": "Medium",
+      "id": "tequila-sunrise", "name": "Tequila Sunrise", "base": "Tequila", "method": "Build", "glass": "Highball", "difficulty": "Easy",
       "ingredients": [
         { "name": "Tequila", "qtyMl": 50 },
-        { "name": "Triple Sec", "qtyMl": 20 },
-        { "name": "Limettensaft", "qtyMl": 30 }
+        { "name": "Orangensaft", "qtyMl": 100 },
+        { "name": "Grenadine", "qtyMl": 10, "float": true }
       ],
-      "instructions": "Shake with ice. Strain into salt-rimmed glass."
+      "instructions": "Pour Tequila and Orange Juice into a glass filled with ice. Stir. Slowly pour Grenadine down the inside edge of the glass so it sinks to the bottom, creating the sunrise effect. Do not stir again."
     },
     {
-      "id": "whisky-sour", "name": "Whisky Sour", "base": "Whiskey", "method": "Shake", "glass": "Tumbler", "difficulty": "Medium",
+      "id": "caipirinha", "name": "Caipirinha", "base": "Rum", "method": "Muddle", "glass": "Tumbler", "difficulty": "Easy",
       "ingredients": [
-        { "name": "Bourbon Whiskey", "qtyMl": 50 },
-        { "name": "Zitronensaft", "qtyMl": 30 },
-        { "name": "Zuckersirup", "qtyMl": 20 },
-        { "name": "Eiweiß", "qtyMl": 15, "optional": true, "label": "1/2 egg white" }
+        { "name": "Cachaça", "qtyMl": 60 },
+        { "name": "Limette", "qtyMl": 0, "label": "1 whole (cut into wedges)" },
+        { "name": "Weißer Rohrzucker", "qtyMl": 0, "label": "2 tsp" }
       ],
-      "instructions": "Dry shake (no ice) first, then shake with ice. Strain over fresh ice."
-    },
-    {
-      "id": "espresso-martini", "name": "Espresso Martini", "base": "Vodka", "method": "Shake", "glass": "Martini", "difficulty": "Medium",
-      "ingredients": [
-        { "name": "Vodka", "qtyMl": 40 },
-        { "name": "Kaffeelikör", "qtyMl": 20 },
-        { "name": "Espresso", "qtyMl": 30 },
-        { "name": "Zuckersirup", "qtyMl": 5 }
-      ],
-      "instructions": "Shake hard with ice to create foam. Strain into chilled glass."
-    },
-    {
-      "id": "negroni", "name": "Negroni", "base": "Gin", "method": "Stir", "glass": "Tumbler", "difficulty": "Easy",
-      "ingredients": [
-        { "name": "Gin", "qtyMl": 30 },
-        { "name": "Campari", "qtyMl": 30 },
-        { "name": "Vermouth Rosso", "qtyMl": 30 }
-      ],
-      "instructions": "Build in glass over ice. Stir gently. Garnish with orange slice."
-    },
-    {
-      "id": "manhattan", "name": "Manhattan", "base": "Whiskey", "method": "Stir", "glass": "Martini", "difficulty": "Medium",
-      "ingredients": [
-        { "name": "Rye Whiskey", "qtyMl": 50 },
-        { "name": "Vermouth Rosso", "qtyMl": 25 },
-        { "name": "Angostura Bitters", "qtyMl": 1, "label": "2 dashes" }
-      ],
-      "instructions": "Stir with ice. Strain into chilled glass. Garnish with cherry."
-    },
-    {
-      "id": "mojito", "name": "Mojito", "base": "Rum", "method": "Build", "glass": "Highball", "difficulty": "Medium",
-      "ingredients": [
-        { "name": "Weißer Rum", "qtyMl": 50 },
-        { "name": "Limettensaft", "qtyMl": 25 },
-        { "name": "Zuckersirup", "qtyMl": 15 },
-        { "name": "Minze", "qtyMl": 0, "label": "handful" },
-        { "name": "Sodawasser", "qtyMl": 60, "top": true }
-      ],
-      "instructions": "Muddle mint gently. Add ingredients and ice. Top with soda."
+      "instructions": "Place lime wedges and sugar in the glass. Muddle firmly to release juice and oils. Fill glass with crushed ice. Pour Cachaça over the ice and stir well to dissolve sugar."
     },
     {
       "id": "moscow-mule", "name": "Moscow Mule", "base": "Vodka", "method": "Build", "glass": "Mule Mug", "difficulty": "Easy",
@@ -91,49 +43,24 @@
         { "name": "Limettensaft", "qtyMl": 15 },
         { "name": "Ingwerbier", "qtyMl": 100, "top": true }
       ],
-      "instructions": "Build in mug over ice. Top with Ginger Beer."
+      "instructions": "Fill copper mug with ice. Add vodka and lime juice. Top with spicy Ginger Beer. Stir gently. Garnish with a lime wheel and mint sprig."
     },
     {
-      "id": "aperol-spritz", "name": "Aperol Spritz", "base": "Wine/Champagner", "method": "Build", "glass": "Wine Glass", "difficulty": "Easy",
+      "id": "martini", "name": "Dry Martini", "base": "Gin", "method": "Stir", "glass": "Martini", "difficulty": "Medium",
       "ingredients": [
-        { "name": "Prosecco", "qtyMl": 90 },
-        { "name": "Aperol", "qtyMl": 60 },
-        { "name": "Sodawasser", "qtyMl": 30 }
+        { "name": "Gin", "qtyMl": 60 },
+        { "name": "Vermouth Dry", "qtyMl": 10 }
       ],
-      "instructions": "Fill glass with ice. Add Prosecco, then Aperol, then Soda."
+      "instructions": "Stir ingredients with plenty of ice in a mixing glass. Strain into a chilled martini glass. Garnish with a lemon twist or olive."
     },
     {
-      "id": "bloody-mary", "name": "Bloody Mary", "base": "Vodka", "method": "Roll/Stir", "glass": "Highball", "difficulty": "Hard",
+      "id": "margarita", "name": "Margarita", "base": "Tequila", "method": "Shake", "glass": "Coupe", "difficulty": "Medium",
       "ingredients": [
-        { "name": "Vodka", "qtyMl": 45 },
-        { "name": "Tomatensaft", "qtyMl": 90 },
-        { "name": "Zitronensaft", "qtyMl": 15 },
-        { "name": "Worcestershiresauce", "qtyMl": 2, "label": "dashes" },
-        { "name": "Tabasco", "qtyMl": 1, "label": "dashes" },
-        { "name": "Salz", "qtyMl": 0, "label": "pinch" },
-        { "name": "Pfeffer", "qtyMl": 0, "label": "pinch" }
+        { "name": "Tequila", "qtyMl": 50 },
+        { "name": "Triple Sec", "qtyMl": 20 },
+        { "name": "Limettensaft", "qtyMl": 30 }
       ],
-      "instructions": "Stir gently with ice. Garnish with celery stick."
-    },
-    {
-      "id": "cosmopolitan", "name": "Cosmopolitan", "base": "Vodka", "method": "Shake", "glass": "Martini", "difficulty": "Medium",
-      "ingredients": [
-        { "name": "Vodka", "qtyMl": 40 },
-        { "name": "Triple Sec", "qtyMl": 15 },
-        { "name": "Limettensaft", "qtyMl": 15 },
-        { "name": "Cranberrysaft", "qtyMl": 30 }
-      ],
-      "instructions": "Shake with ice. Strain into chilled glass."
-    },
-    {
-      "id": "tom-collins", "name": "Tom Collins", "base": "Gin", "method": "Shake + top", "glass": "Longdrink", "difficulty": "Easy",
-      "ingredients": [
-        { "name": "Gin", "qtyMl": 50 },
-        { "name": "Zitronensaft", "qtyMl": 30 },
-        { "name": "Zuckersirup", "qtyMl": 20 },
-        { "name": "Sodawasser", "qtyMl": 100, "top": true }
-      ],
-      "instructions": "Shake (except soda). Strain onto ice. Top with soda."
+      "instructions": "Rub rim of glass with lime and dip in salt. Shake all ingredients with ice. Strain into the prepared glass."
     },
     {
       "id": "mai-tai", "name": "Mai Tai", "base": "Rum", "method": "Shake", "glass": "Tumbler", "difficulty": "Hard",
@@ -144,149 +71,7 @@
         { "name": "Mandelsirup", "qtyMl": 10 },
         { "name": "Limettensaft", "qtyMl": 25 }
       ],
-      "instructions": "Shake hard. Pour unstrained into glass."
-    },
-    {
-      "id": "pina-colada", "name": "Piña Colada", "base": "Rum", "method": "Shake/Blend", "glass": "Highball", "difficulty": "Medium",
-      "ingredients": [
-        { "name": "Weißer Rum", "qtyMl": 50 },
-        { "name": "Kokosnusscreme", "qtyMl": 30 },
-        { "name": "Ananassaft", "qtyMl": 90 }
-      ],
-      "instructions": "Shake hard or blend with crushed ice."
-    },
-    {
-      "id": "dark-n-stormy", "name": "Dark 'n' Stormy", "base": "Rum", "method": "Build", "glass": "Highball", "difficulty": "Easy",
-      "ingredients": [
-        { "name": "Dunkler Rum", "qtyMl": 60 },
-        { "name": "Ingwerbier", "qtyMl": 100 },
-        { "name": "Limettensaft", "qtyMl": 10 }
-      ],
-      "instructions": "Build in glass over ice. Garnish with lime wedge."
-    },
-    {
-      "id": "caipirinha", "name": "Caipirinha", "base": "Rum", "method": "Muddle", "glass": "Tumbler", "difficulty": "Easy",
-      "ingredients": [
-        { "name": "Cachaça", "qtyMl": 60 },
-        { "name": "Limette", "qtyMl": 0, "label": "1 whole (cut)" },
-        { "name": "Weißer Rohrzucker", "qtyMl": 0, "label": "2 tsp" }
-      ],
-      "instructions": "Muddle lime chunks and sugar. Add ice and Cachaça. Stir."
-    },
-    {
-      "id": "gin-fizz", "name": "Gin Fizz", "base": "Gin", "method": "Shake + top", "glass": "Highball", "difficulty": "Medium",
-      "ingredients": [
-        { "name": "Gin", "qtyMl": 50 },
-        { "name": "Zitronensaft", "qtyMl": 30 },
-        { "name": "Zuckersirup", "qtyMl": 10 },
-        { "name": "Sodawasser", "qtyMl": 80, "top": true }
-      ],
-      "instructions": "Shake (no soda). Strain into glass (no ice). Top with soda."
-    },
-    {
-      "id": "white-russian", "name": "White Russian", "base": "Vodka", "method": "Build", "glass": "Tumbler", "difficulty": "Easy",
-      "ingredients": [
-        { "name": "Vodka", "qtyMl": 50 },
-        { "name": "Kaffeelikör", "qtyMl": 20 },
-        { "name": "Sahne", "qtyMl": 30, "float": true }
-      ],
-      "instructions": "Build vodka and liqueur over ice. Float cream on top."
-    },
-    {
-      "id": "bellini", "name": "Bellini", "base": "Wine/Champagner", "method": "Stir", "glass": "Flute", "difficulty": "Easy",
-      "ingredients": [
-        { "name": "Prosecco", "qtyMl": 100 },
-        { "name": "Pfirsichpüree", "qtyMl": 50 }
-      ],
-      "instructions": "Pour puree into glass. Top gently with Prosecco."
-    },
-    {
-      "id": "french-75", "name": "French 75", "base": "Gin", "method": "Shake + top", "glass": "Flute", "difficulty": "Medium",
-      "ingredients": [
-        { "name": "Gin", "qtyMl": 30 },
-        { "name": "Zitronensaft", "qtyMl": 15 },
-        { "name": "Zuckersirup", "qtyMl": 15 },
-        { "name": "Schaumwein", "qtyMl": 60, "top": true }
-      ],
-      "instructions": "Shake first 3 ingredients. Strain into flute. Top with Champagne."
-    },
-    {
-      "id": "gimlet", "name": "Gimlet", "base": "Gin", "method": "Shake", "glass": "Coupe", "difficulty": "Medium",
-      "ingredients": [
-        { "name": "Gin", "qtyMl": 60 },
-        { "name": "Limettensaft", "qtyMl": 30 },
-        { "name": "Zuckersirup", "qtyMl": 15 }
-      ],
-      "instructions": "Shake with ice. Strain into chilled glass."
-    },
-    {
-      "id": "paloma", "name": "Paloma", "base": "Tequila", "method": "Build", "glass": "Highball", "difficulty": "Easy",
-      "ingredients": [
-        { "name": "Tequila", "qtyMl": 50 },
-        { "name": "Limettensaft", "qtyMl": 10 },
-        { "name": "Grapefruit Soda", "qtyMl": 100, "top": true },
-        { "name": "Salz", "qtyMl": 0, "label": "pinch" }
-      ],
-      "instructions": "Build in glass with ice. Stir."
-    },
-    {
-      "id": "mint-julep", "name": "Mint Julep", "base": "Whiskey", "method": "Muddle", "glass": "Julep Cup", "difficulty": "Medium",
-      "ingredients": [
-        { "name": "Bourbon Whiskey", "qtyMl": 60 },
-        { "name": "Minze", "qtyMl": 0, "label": "10 leaves" },
-        { "name": "Zuckersirup", "qtyMl": 10 }
-      ],
-      "instructions": "Muddle mint gently. Fill cup with crushed ice. Add bourbon. Stir until cup frosts."
-    },
-    {
-      "id": "tequila-sunrise", "name": "Tequila Sunrise", "base": "Tequila", "method": "Build", "glass": "Highball", "difficulty": "Easy",
-      "ingredients": [
-        { "name": "Tequila", "qtyMl": 50 },
-        { "name": "Orangensaft", "qtyMl": 100 },
-        { "name": "Grenadine", "qtyMl": 10, "float": true }
-      ],
-      "instructions": "Build tequila and juice. Sink grenadine to bottom."
-    },
-    {
-      "id": "long-island", "name": "Long Island Iced Tea", "base": "Vodka", "method": "Build", "glass": "Highball", "difficulty": "Hard",
-      "ingredients": [
-        { "name": "Vodka", "qtyMl": 15 },
-        { "name": "Rum", "qtyMl": 15 },
-        { "name": "Gin", "qtyMl": 15 },
-        { "name": "Tequila", "qtyMl": 15 },
-        { "name": "Triple Sec", "qtyMl": 15 },
-        { "name": "Zitronensaft", "qtyMl": 25 },
-        { "name": "Zuckersirup", "qtyMl": 15 },
-        { "name": "Cola", "qtyMl": 40, "top": true }
-      ],
-      "instructions": "Shake all spirits/sour. Strain into ice-filled glass. Top with Cola."
-    },
-    {
-      "id": "cuba-libre", "name": "Cuba Libre", "base": "Rum", "method": "Build", "glass": "Highball", "difficulty": "Easy",
-      "ingredients": [
-        { "name": "Brauner Rum", "qtyMl": 50 },
-        { "name": "Limettensaft", "qtyMl": 10 },
-        { "name": "Cola", "qtyMl": 120, "top": true }
-      ],
-      "instructions": "Build in glass over ice."
-    },
-    {
-      "id": "shirley-temple", "name": "Shirley Temple", "base": "Non-Alcoholic", "method": "Build", "glass": "Highball", "difficulty": "Easy",
-      "ingredients": [
-        { "name": "Ginger Ale", "qtyMl": 100 },
-        { "name": "Grenadine", "qtyMl": 20 },
-        { "name": "Zitronensaft", "qtyMl": 5 }
-      ],
-      "instructions": "Build over ice. Garnish with cherry."
-    },
-    {
-      "id": "virgin-colada", "name": "Virgin Colada", "base": "Non-Alcoholic", "method": "Blend/Shake", "glass": "Highball", "difficulty": "Medium",
-      "ingredients": [
-        { "name": "Ananassaft", "qtyMl": 120 },
-        { "name": "Kokosnusscreme", "qtyMl": 40 },
-        { "name": "Sahne", "qtyMl": 20 }
-      ],
-      "instructions": "Shake hard or blend with crushed ice."
+      "instructions": "Shake all ingredients vigorously with crushed ice. Pour everything (unstrained) into a double old-fashioned glass. Garnish with mint sprig and lime shell."
     }
   ]
 }
