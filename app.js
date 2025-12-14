@@ -1,12 +1,12 @@
-/* app.js - Pixel & Pour Cocktail Calculator (International) v2.3 */
+/* app.js - Pixel & Pour Cocktail Calculator (v3.0 - Print Fixed) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
 
 // -- DOM Elements --
-const q = $('#q'); // Input field
-const clearSearchBtn = $('#clearSearch'); // NEW: Clear Button
-const recipeList = $('#recipeList'); // Datalist
+const q = $('#q');
+const clearSearchBtn = $('#clearSearch');
+const recipeList = $('#recipeList');
 const base = $('#base');
 const units = $('#units');
 const langSelect = $('#langSelect'); 
@@ -21,6 +21,7 @@ const bbTable = $('#bbTable tbody');
 const bbList = $('#bbList');
 const includeGarnish = $('#includeGarnish');
 const roundBottles = $('#roundBottles');
+const printBtn = $('#printSheet'); // Fixed: Selected the print button
 
 // -- State --
 let RECIPES = [];
@@ -28,7 +29,7 @@ let SUBS = {};
 let GENERICS = {};
 const selected = new Set();
 const barBack = new Map();
-let CURRENT_LANG = 'en'; // Default
+let CURRENT_LANG = 'en';
 
 // -- Dictionary --
 const DICT = {
@@ -201,12 +202,10 @@ function render() {
   scaleLabel.textContent = scaleMode.value === 'servings' ? t('servings') : t('target_ml');
   q.placeholder = t('search_ph');
   
-  // Toggle Clear Button
   clearSearchBtn.hidden = qv === "";
 
-  // 1. Check if filters are default (Clean Start / Zero State)
+  // Zero State
   const isDefaultFilters = qv === "" && bv === "All" && selected.size === 0;
-  
   if(isDefaultFilters) {
       results.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:var(--muted);">
         <h2 style="color:var(--txt); margin-bottom:10px;">${t('welcome_head')}</h2>
@@ -238,11 +237,9 @@ function render() {
       const top = i.top ? ' (top up)' : '';
       const name = t(i.name, 'ing'); 
       const qtyDisplay = i.qtyMl ? `<span class="qty">${v} ${u}</span>` : '—';
-      
       const isMissing = selected.size > 0 && !i.optional && !matchesSelection(i.name);
       const style = isMissing ? 'color:var(--fail); font-weight:bold;' : '';
       const missingIcon = isMissing ? ' ⚠️' : '';
-
       return `<div style="${style}">${qtyDisplay} ${name}${label}${top}${missingIcon}</div>`;
     }).join('');
 
@@ -299,6 +296,7 @@ function renderBarBack() {
   Array.from(totals.entries()).sort().forEach(([name, ml]) => {
     let mlDisplay = "";
     if (roundBottles.checked) {
+        // Round to 750ml bottles (logic check: 750ml is standard)
         const btls = Math.ceil(ml / 750);
         mlDisplay = `<strong>${btls}</strong> x 750ml btls`;
     } else {
@@ -314,30 +312,17 @@ function renderBarBack() {
 
 // -- Listeners --
 q.addEventListener('input', render);
-base.addEventListener('change', () => { 
-    q.value = ""; 
-    populateDatalist(); 
-    render(); 
-});
+base.addEventListener('change', () => { q.value = ""; populateDatalist(); render(); });
 units.addEventListener('change', render);
 scaleMode.addEventListener('change', render);
 scaleValue.addEventListener('input', render);
 langSelect.addEventListener('change', () => { CURRENT_LANG = langSelect.value; renderPantry(); render(); renderBarBack(); });
 includeGarnish.addEventListener('change', renderBarBack);
 roundBottles.addEventListener('change', renderBarBack);
+clearPantryBtn.addEventListener('click', () => { selected.clear(); $$('#pantry input[type="checkbox"]').forEach(box => box.checked = false); render(); });
+clearSearchBtn.addEventListener('click', () => { q.value = ""; q.focus(); render(); });
 
-// NEW: Clear Pantry Listener
-clearPantryBtn.addEventListener('click', () => {
-    selected.clear();
-    $$('#pantry input[type="checkbox"]').forEach(box => box.checked = false);
-    render();
-});
-
-// NEW: Clear Search Listener
-clearSearchBtn.addEventListener('click', () => {
-    q.value = "";
-    q.focus();
-    render();
-});
+// THE FIX: Adding the Print Listener!
+if(printBtn) printBtn.addEventListener('click', () => window.print());
 
 initData();
