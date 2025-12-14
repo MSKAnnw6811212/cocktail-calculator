@@ -28,7 +28,7 @@ h1 { margin:0; font-size: 22px; color: var(--txt); }
 label{display:flex;flex-direction:column;gap:6px;flex:1;min-width:180px}
 label span { font-size: 13px; font-weight: 600; text-transform: uppercase; color: var(--muted); letter-spacing: 0.5px; }
 
-input,select{padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--txt);font-size:16px;font-family:inherit;}
+input,select{padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--txt);font-size:16px;font-family:inherit;width:100%}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
 
 .recipe{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px}
@@ -60,6 +60,21 @@ button.link{background:transparent;border:0;color:var(--primary);cursor:pointer}
 .checkbox-row { display: flex; gap: 20px; align-items: center; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); }
 .check-label { flex-direction: row; align-items: center; min-width: auto; text-transform: none; color: var(--txt); }
 .check-label span { text-transform: none; }
+
+/* NEW: Clear Search Button */
+.clear-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 0 5px;
+}
+.clear-btn:hover { color: var(--fail); }
 
 @media print {
   body{background:#fff;color:#000}
