@@ -13,7 +13,7 @@
 <body>
   <header class="container header">
     <div class="brand">
-      <span class="logo">Pixel & Pour</span>
+      <span class="logo">🍸 Pixel & Pour</span>
       <h1>Cocktail Calculator</h1>
     </div>
     <nav class="nav">
@@ -32,9 +32,12 @@
           </select>
         </label>
         
-        <label>
+        <label class="search-wrapper">
           <span>Find Recipe / Suche</span>
-          <input id="q" list="recipeList" placeholder="Type or select..." />
+          <div style="position:relative;">
+            <input id="q" list="recipeList" placeholder="Type or select..." autocomplete="off" />
+            <button id="clearSearch" class="clear-btn" hidden>×</button>
+          </div>
           <datalist id="recipeList"></datalist>
         </label>
         
@@ -64,7 +67,7 @@
       <details>
         <summary>Pantry — Filter by what you have</summary>
         <div class="pantry-controls" style="margin: 10px 0; display:flex; justify-content:space-between; align-items:center;">
-            <small style="color:var(--muted)">Select <strong>everything</strong> you have (including lemons, sugar, etc.)</small>
+            <small style="color:var(--muted)">Select ingredients to see what you can make.</small>
             <button id="clearPantry" class="button link" style="font-size:14px;">❌ Clear Selection</button>
         </div>
         <div id="pantry" class="pantry"></div>
