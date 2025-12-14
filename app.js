@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (v3.0 Final) */
+/* app.js - Pixel & Pour Cocktail Calculator (v4.0 - Fixes) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -31,6 +31,12 @@ const selected = new Set();
 const barBack = new Map();
 let CURRENT_LANG = 'en';
 
+// -- Essentials (Always show these in Pantry) --
+const ESSENTIALS = [
+    "Eiswürfel", "Crushed Ice", "Zucker", "Salz", "Pfeffer", 
+    "Limette", "Zitrone", "Orange", "Minze", "Oliven", "Kirsche"
+];
+
 // -- Dictionary --
 const DICT = {
     ui: {
@@ -39,14 +45,18 @@ const DICT = {
             search_ph: "Type to search or browse...", base_all: "All Bases",
             add_sheet: "+ Shopping List", glass: "Glass", method: "Method", ingredients: "Ingredients",
             welcome_head: "Welcome to Pixel & Pour",
-            welcome_text: "Select a Base Spirit, Search for a drink, or filter by your Pantry ingredients to get started."
+            welcome_text: "Select a Base Spirit, Search for a drink, or filter by your Pantry ingredients to get started.",
+            qty_count: "Count / As needed",
+            cat_essentials: "Essentials (Ice, Fruit, etc.)"
         },
         de: { 
             servings: "Portionen", target_ml: "Zielmenge (ml)", 
             search_ph: "Tippen zum Suchen...", base_all: "Alle Basen",
             add_sheet: "+ Einkaufsliste", glass: "Glas", method: "Methode", ingredients: "Zutaten",
             welcome_head: "Willkommen bei Pixel & Pour",
-            welcome_text: "Wähle eine Basis, suche einen Drink oder filtere nach deinen Zutaten."
+            welcome_text: "Wähle eine Basis, suche einen Drink oder filtere nach deinen Zutaten.",
+            qty_count: "Stück / Nach Bedarf",
+            cat_essentials: "Basics (Eis, Obst, etc.)"
         }
     },
     ing: {
@@ -61,7 +71,9 @@ const DICT = {
         "Pfeffer": "Pepper", "Salz": "Salt", "Zitrone": "Lemon", "Brauner Rum": "Aged Rum",
         "Cola": "Cola", "Tonic Water": "Tonic Water", "Schaumwein": "Sparkling Wine",
         "Pfirsichpüree": "Peach Puree", "Aperol": "Aperol", "Prosecco": "Prosecco",
-        "Cachaça": "Cachaça", "Grapefruit Soda": "Grapefruit Soda"
+        "Cachaça": "Cachaça", "Grapefruit Soda": "Grapefruit Soda", "Eiswürfel": "Ice Cubes",
+        "Crushed Ice": "Crushed Ice", "Zucker": "Sugar", "Oliven": "Olives", "Kirsche": "Cherry",
+        "Orange": "Orange"
     }
 };
 
@@ -118,6 +130,7 @@ function getGlassIcon(glassType) {
 
 function typeOf(name) {
   const n = name.toLowerCase();
+  if(ESSENTIALS.includes(name)) return 'Essentials'; // FORCE ESSENTIALS
   if (/gin|wodka|vodka|rum|whisk|bourbon|rye|tequila|cognac|brandy|cachaça/.test(n)) return 'Spirit';
   if (/vermouth|wermut|sherry|porto|aperitif|campari|amaro|liqueur|likör|sec|cointreau|kahlua/.test(n)) return 'Liqueur';
   if (/wine|wein|champagner|sekt|prosecco/.test(n)) return 'Wine/Bubbly';
@@ -164,25 +177,36 @@ function populateDatalist() {
 }
 
 function renderPantry() {
-  const allIngredients = Array.from(new Set(RECIPES.flatMap(r => r.ingredients.map(i => i.name)))).sort();
-  const groups = { Spirit: [], Liqueur: [], 'Wine/Bubbly': [], 'Mixer/NA': [] };
+  // 1. Get recipes ingredients
+  const recipeIngredients = new Set(RECIPES.flatMap(r => r.ingredients.map(i => i.name)));
+  // 2. Add Essentials
+  ESSENTIALS.forEach(e => recipeIngredients.add(e));
+  
+  const allIngredients = Array.from(recipeIngredients).sort();
+  const groups = { Essentials:[], Spirit: [], Liqueur: [], 'Wine/Bubbly': [], 'Mixer/NA': [] };
   
   for (const ing of allIngredients) {
     const type = typeOf(ing);
     if(groups[type]) groups[type].push(ing); else groups['Mixer/NA'].push(ing);
   }
+  // Generics
   for (const label of Object.keys(GENERICS)) {
       const type = typeOf(label);
       if(groups[type]) groups[type].push(label);
   }
 
-  pantryBox.innerHTML = Object.entries(groups).map(([g, list]) => {
-    if(list.length === 0) return '';
+  // Force specific order
+  const order = ['Essentials', 'Spirit', 'Liqueur', 'Wine/Bubbly', 'Mixer/NA'];
+
+  pantryBox.innerHTML = order.map(g => {
+    const list = groups[g];
+    if(!list || list.length === 0) return '';
     const uniqueList = [...new Set(list)].sort();
-    return `<div class="card" style="break-inside: avoid;"><strong>${g}</strong><div style="display:flex;flex-direction:column;gap:4px;margin-top:4px;">` +
+    const title = g === 'Essentials' ? t('cat_essentials') : g;
+    return `<div class="pantry-group"><strong>${title}</strong><div class="pantry-grid">` +
       uniqueList.map(name => {
          const isChecked = selected.has(name) ? 'checked' : '';
-         return `<label><input type="checkbox" value="${name}" ${isChecked}> ${t(name, 'ing')}</label>`;
+         return `<label class="pantry-item"><input type="checkbox" value="${name}" ${isChecked}> ${t(name, 'ing')}</label>`;
       }).join('') +
       `</div></div>`;
   }).join('');
@@ -201,10 +225,8 @@ function render() {
   
   scaleLabel.textContent = scaleMode.value === 'servings' ? t('servings') : t('target_ml');
   q.placeholder = t('search_ph');
-  
   clearSearchBtn.hidden = qv === "";
 
-  // Zero State
   const isDefaultFilters = qv === "" && bv === "All" && selected.size === 0;
   if(isDefaultFilters) {
       results.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:var(--muted);">
@@ -237,6 +259,7 @@ function render() {
       const top = i.top ? ' (top up)' : '';
       const name = t(i.name, 'ing'); 
       const qtyDisplay = i.qtyMl ? `<span class="qty">${v} ${u}</span>` : '—';
+      
       const isMissing = selected.size > 0 && !i.optional && !matchesSelection(i.name);
       const style = isMissing ? 'color:var(--fail); font-weight:bold;' : '';
       const missingIcon = isMissing ? ' ⚠️' : '';
@@ -286,25 +309,36 @@ function renderBarBack() {
   for (const { recipe, servings } of barBack.values()) {
     for (const ing of recipe.ingredients) {
       if (ing.optional && !includeGarnish.checked) continue;
-      if (!ing.qtyMl) continue;
-      const totalMl = ing.qtyMl * servings;
-      totals.set(ing.name, (totals.get(ing.name) || 0) + totalMl);
+      // FIX: INCLUDE 0ml ITEMS (like Limes/Sugar)
+      const totalMl = (ing.qtyMl || 0) * servings;
+      // Store object with ml AND count logic
+      if(!totals.has(ing.name)) totals.set(ing.name, { ml:0, count:0 });
+      const rec = totals.get(ing.name);
+      rec.ml += totalMl;
+      rec.count += servings; // Rough count of how many drinks need this
     }
   }
 
   bbTable.innerHTML = "";
-  Array.from(totals.entries()).sort().forEach(([name, ml]) => {
+  Array.from(totals.entries()).sort().forEach(([name, data]) => {
     let mlDisplay = "";
-    if (roundBottles.checked) {
-        const btls = Math.ceil(ml / 750);
-        mlDisplay = `<strong>${btls}</strong> x 750ml btls`;
+    // Display Logic
+    if (data.ml > 0) {
+        if (roundBottles.checked) {
+            const btls = Math.ceil(data.ml / 750);
+            mlDisplay = `<strong>${btls}</strong> x 750ml btls`;
+        } else {
+            mlDisplay = `${Math.round(data.ml)} ml`;
+        }
     } else {
-        mlDisplay = `${Math.round(ml)} ml`;
+        // For non-liquid items (Limes, Sugar, etc.)
+        mlDisplay = `<span style="color:var(--muted);">${t('qty_count')}</span>`;
     }
-    const cl = (ml / 10).toFixed(1);
-    const oz = (ml / 29.57).toFixed(1);
+
+    const cl = data.ml > 0 ? (data.ml / 10).toFixed(1) + ' cl' : '—';
+    const oz = data.ml > 0 ? (data.ml / 29.57).toFixed(1) + ' oz' : '—';
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${t(name, 'ing')}</td><td>${mlDisplay}</td><td>${cl} cl / ${oz} oz</td>`;
+    tr.innerHTML = `<td>${t(name, 'ing')}</td><td>${mlDisplay}</td><td>${cl} / ${oz}</td>`;
     bbTable.appendChild(tr);
   });
 }
@@ -321,7 +355,12 @@ roundBottles.addEventListener('change', renderBarBack);
 clearPantryBtn.addEventListener('click', () => { selected.clear(); $$('#pantry input[type="checkbox"]').forEach(box => box.checked = false); render(); });
 clearSearchBtn.addEventListener('click', () => { q.value = ""; q.focus(); render(); });
 
-// Print Button Logic
-if(printBtn) printBtn.addEventListener('click', () => window.print());
+// -- Print Logic (Preview First) --
+if(printBtn) printBtn.addEventListener('click', () => {
+    // Scroll to BarBack
+    document.getElementById('barback').scrollIntoView({behavior: 'smooth'});
+    // Slight delay to allow scroll, then print
+    setTimeout(() => window.print(), 500);
+});
 
 initData();
