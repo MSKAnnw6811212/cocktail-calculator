@@ -1,16 +1,17 @@
-/* app.js - Pixel & Pour Cocktail Calculator (International) v2.2 */
+/* app.js - Pixel & Pour Cocktail Calculator (International) v2.3 */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
 
 // -- DOM Elements --
 const q = $('#q'); // Input field
+const clearSearchBtn = $('#clearSearch'); // NEW: Clear Button
 const recipeList = $('#recipeList'); // Datalist
 const base = $('#base');
 const units = $('#units');
 const langSelect = $('#langSelect'); 
 const pantryBox = $('#pantry');
-const clearPantryBtn = $('#clearPantry'); // NEW
+const clearPantryBtn = $('#clearPantry');
 const results = $('#results');
 const scaleMode = $('#scaleMode');
 const scaleValue = $('#scaleValue');
@@ -29,18 +30,22 @@ const selected = new Set();
 const barBack = new Map();
 let CURRENT_LANG = 'en'; // Default
 
-// -- Dictionary for Translations --
+// -- Dictionary --
 const DICT = {
     ui: {
         en: { 
             servings: "Servings", target_ml: "Target ml (total)", 
             search_ph: "Type to search or browse...", base_all: "All Bases",
-            add_sheet: "+ Shopping List", glass: "Glass", method: "Method", ingredients: "Ingredients"
+            add_sheet: "+ Shopping List", glass: "Glass", method: "Method", ingredients: "Ingredients",
+            welcome_head: "Welcome to Pixel & Pour",
+            welcome_text: "Select a Base Spirit, Search for a drink, or filter by your Pantry ingredients to get started."
         },
         de: { 
             servings: "Portionen", target_ml: "Zielmenge (ml)", 
             search_ph: "Tippen zum Suchen...", base_all: "Alle Basen",
-            add_sheet: "+ Einkaufsliste", glass: "Glas", method: "Methode", ingredients: "Zutaten"
+            add_sheet: "+ Einkaufsliste", glass: "Glas", method: "Methode", ingredients: "Zutaten",
+            welcome_head: "Willkommen bei Pixel & Pour",
+            welcome_text: "Wähle eine Basis, suche einen Drink oder filtere nach deinen Zutaten."
         }
     },
     ing: {
@@ -74,9 +79,7 @@ async function initData() {
       fetch('./data/cocktails.json'),
       fetch('./data/substitutions.json')
     ]);
-    
     if(!rRes.ok || !sRes.ok) throw new Error("Failed to load data files");
-
     const rData = await rRes.json();
     const sData = await sRes.json();
 
@@ -135,22 +138,17 @@ function scaledMl(ml) {
 
 function matchesSelection(ingName) {
   if (selected.has(ingName)) return true;
-  // Check substitutions
   const sub = SUBS[ingName];
   if (sub && sub.some(s => selected.has(s))) return true;
-  // Check generic families
   for (const [label, pattern] of Object.entries(GENERICS)) {
     if (!selected.has(label)) continue;
-    try {
-      if (new RegExp(pattern, 'i').test(ingName)) return true;
-    } catch (e) { }
+    try { if (new RegExp(pattern, 'i').test(ingName)) return true; } catch (e) { }
   }
   return false;
 }
 
 function makeable(r) {
-  if (selected.size === 0) return true; // If pantry is empty, show everything
-  // Otherwise, strict match: MUST have all non-optional ingredients
+  if (selected.size === 0) return true;
   return r.ingredients.every(i => i.optional || matchesSelection(i.name));
 }
 
@@ -172,7 +170,6 @@ function renderPantry() {
     const type = typeOf(ing);
     if(groups[type]) groups[type].push(ing); else groups['Mixer/NA'].push(ing);
   }
-  // Add Generics
   for (const label of Object.keys(GENERICS)) {
       const type = typeOf(label);
       if(groups[type]) groups[type].push(label);
@@ -203,6 +200,21 @@ function render() {
   
   scaleLabel.textContent = scaleMode.value === 'servings' ? t('servings') : t('target_ml');
   q.placeholder = t('search_ph');
+  
+  // Toggle Clear Button
+  clearSearchBtn.hidden = qv === "";
+
+  // 1. Check if filters are default (Clean Start / Zero State)
+  const isDefaultFilters = qv === "" && bv === "All" && selected.size === 0;
+  
+  if(isDefaultFilters) {
+      results.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:var(--muted);">
+        <h2 style="color:var(--txt); margin-bottom:10px;">${t('welcome_head')}</h2>
+        <p>${t('welcome_text')}</p>
+        <div style="font-size:40px; margin-top:20px; opacity:0.3;">🍸 🥃 🍹</div>
+      </div>`;
+      return;
+  }
 
   let list = RECIPES.filter(r => 
     (bv === 'All' || (r.base && r.base.includes(bv))) &&
@@ -213,7 +225,7 @@ function render() {
   if(list.length === 0) {
       results.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--muted);">
         <h3>No matches found</h3>
-        <p>Try adding more ingredients to your pantry (Sugar, Lemon, etc.) or clearing the selection.</p>
+        <p>Try adding more ingredients to your pantry or clearing the filters.</p>
       </div>`;
       return;
   }
@@ -227,7 +239,6 @@ function render() {
       const name = t(i.name, 'ing'); 
       const qtyDisplay = i.qtyMl ? `<span class="qty">${v} ${u}</span>` : '—';
       
-      // Highlight missing ingredients if pantry is active
       const isMissing = selected.size > 0 && !i.optional && !matchesSelection(i.name);
       const style = isMissing ? 'color:var(--fail); font-weight:bold;' : '';
       const missingIcon = isMissing ? ' ⚠️' : '';
@@ -303,7 +314,11 @@ function renderBarBack() {
 
 // -- Listeners --
 q.addEventListener('input', render);
-base.addEventListener('change', () => { q.value = ""; populateDatalist(); render(); });
+base.addEventListener('change', () => { 
+    q.value = ""; 
+    populateDatalist(); 
+    render(); 
+});
 units.addEventListener('change', render);
 scaleMode.addEventListener('change', render);
 scaleValue.addEventListener('input', render);
@@ -314,8 +329,14 @@ roundBottles.addEventListener('change', renderBarBack);
 // NEW: Clear Pantry Listener
 clearPantryBtn.addEventListener('click', () => {
     selected.clear();
-    // Uncheck all checkboxes visually
     $$('#pantry input[type="checkbox"]').forEach(box => box.checked = false);
+    render();
+});
+
+// NEW: Clear Search Listener
+clearSearchBtn.addEventListener('click', () => {
+    q.value = "";
+    q.focus();
     render();
 });
 
