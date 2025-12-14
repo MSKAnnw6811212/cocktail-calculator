@@ -15,9 +15,17 @@ html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.5 var(--font-body)}
 
 /* Brand & Typography */
-h1, h2, h3, .logo, .brand { font-family: var(--font-head); }
-.logo { font-weight: 700; font-size: 18px; color: var(--primary); background: transparent; padding:0; }
-h1 { margin:0; font-size: 22px; color: var(--txt); }
+h1, h2, h3, .brand { font-family: var(--font-head); }
+.logo { 
+    font-family: var(--font-head); 
+    font-weight: 700; 
+    font-size: 20px; 
+    color: var(--primary); 
+    /* Remove background box to match Artisan style */
+    background: transparent; 
+    padding:0; 
+}
+h1 { margin:0; font-size: 24px; color: var(--txt); }
 
 .container{max-width:1100px;margin:auto;padding:16px}
 .header,.footer{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
@@ -32,7 +40,7 @@ input,select{padding:10px;border:1px solid var(--border);border-radius:8px;backg
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
 
 .recipe{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;flex-direction:column;gap:12px}
-.recipe h3 { font-size: 20px; margin-top: 0; }
+.recipe h3 { font-size: 22px; margin-top: 0; }
 
 .badges{display:flex;gap:6px;flex-wrap:wrap}
 .badge{font-size:12px;border:1px solid var(--border);padding:4px 10px;border-radius:20px;background:#f3f4f6;color:var(--txt);font-weight:500}
@@ -56,12 +64,10 @@ button.link{background:transparent;border:0;color:var(--primary);cursor:pointer}
 .bb-table th { background: var(--bg); font-weight:600; font-size:14px; }
 .bb-chip{display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:4px 12px;margin:0 6px 6px 0;font-size:14px}
 
-/* Checkbox Alignment Fix */
 .checkbox-row { display: flex; gap: 20px; align-items: center; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); }
 .check-label { flex-direction: row; align-items: center; min-width: auto; text-transform: none; color: var(--txt); }
 .check-label span { text-transform: none; }
 
-/* NEW: Clear Search Button */
 .clear-btn {
     position: absolute;
     right: 10px;
@@ -76,8 +82,11 @@ button.link{background:transparent;border:0;color:var(--primary);cursor:pointer}
 }
 .clear-btn:hover { color: var(--fail); }
 
+/* Print Styles */
 @media print {
   body{background:#fff;color:#000}
-  header, .controls, .grid, footer{display:none !important}
-  #barback{display:block !important; border:none; box-shadow:none;}
+  header, .controls, .grid, footer, .bb-actions, .checkbox-row {display:none !important}
+  #barback {display:block !important; border:none; box-shadow:none; padding:0; margin:0;}
+  main { padding: 0; margin: 0; }
+  .container { max-width: 100%; }
 }
