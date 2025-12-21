@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (v11.0 - Full UI Translation) */
+/* app.js - Pixel & Pour Cocktail Calculator (v12.0 - German Crash Fix) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -81,6 +81,7 @@ const DICT = {
         }
     },
     ing: {
+        // German Key -> English Value Map
         "Eiswürfel": "Ice Cubes", "Crushed Ice": "Crushed Ice", "Zucker": "Sugar", "Salz": "Salt", "Pfeffer": "Pepper",
         "Limette": "Lime", "Zitrone": "Lemon", "Orange": "Orange", "Minze": "Mint", "Oliven": "Olives", "Kirsche": "Cherry",
         "Gin": "Gin", "Rum (any)": "Rum (Any)", "Whiskey (any)": "Whiskey (Any)", "Vodka": "Vodka", "Tequila": "Tequila",
@@ -115,34 +116,36 @@ async function initData() {
     const sData = await sRes.json();
     RECIPES = rData.recipes; SUBS = sData.substitutions; GENERICS = sData.generic_families;
     
-    // NEW: Update Language first
     updateStaticLabels();
-    
     populateDatalist(); renderPantry(); render(); renderBarBack();
   } catch (err) { results.innerHTML = `<div class="card" style="color:var(--fail); padding:20px;">Error Loading Data.</div>`; }
 }
 
+// FIXED TRANSLATION FUNCTION
 function t(key, type='ui') {
-    if (CURRENT_LANG === 'de') return DICT[type].de[key] || key;
+    // 1. Ingredients Logic
     if (type === 'ing') {
-        if (CURRENT_LANG === 'en') return DICT.ing[key] || key;
+        if (CURRENT_LANG === 'en') {
+            return DICT.ing[key] || key; // Translate German -> English
+        }
+        // If German, just return the key (because the data source is already German)
         return key; 
     }
-    return DICT.ui.en[key] || key; 
+
+    // 2. UI Labels Logic (Nested Dictionary)
+    if (DICT.ui[CURRENT_LANG] && DICT.ui[CURRENT_LANG][key]) {
+        return DICT.ui[CURRENT_LANG][key];
+    }
+    // Fallback to English if translation missing
+    return DICT.ui.en[key] || key;
 }
 
-// NEW: This function updates the hardcoded HTML labels
 function updateStaticLabels() {
-    // 1. Update elements with data-i18n attribute
     $$('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         el.textContent = t(key, 'ui');
     });
-
-    // 2. Update Placeholders
     q.placeholder = t('search_ph', 'ui');
-    
-    // 3. Update Scale Label
     scaleLabel.textContent = scaleMode.value === 'servings' ? t('servings_label') : t('target_label');
 }
 
@@ -270,6 +273,7 @@ function render() {
   if(list.length === 0) {
       results.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--muted);">
         <h3>No matches found</h3>
+        <p>Try clearing filters or adding more ingredients.</p>
       </div>`;
       return;
   }
@@ -380,7 +384,7 @@ scaleMode.addEventListener('change', render);
 scaleValue.addEventListener('input', render);
 langSelect.addEventListener('change', () => { 
     CURRENT_LANG = langSelect.value; 
-    updateStaticLabels(); // NEW: Update the HTML labels instantly
+    updateStaticLabels(); 
     renderPantry(); 
     render(); 
     renderBarBack(); 
