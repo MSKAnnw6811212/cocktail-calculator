@@ -15,9 +15,7 @@
     <div class="brand">
       <div class="logo-row">
         <div class="logo-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M10 2v7.31"/><path d="M14 2v7.31"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/>
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.31"/><path d="M14 2v7.31"/><path d="M8.5 2h7"/><path d="M14 9.3a6.5 6.5 0 1 1-4 0"/></svg>
         </div>
         <span class="logo-text">Pixel & Pour</span>
       </div>
@@ -32,7 +30,7 @@
     <section class="controls card">
       <div class="row">
         <label>
-          <span>Language / Sprache</span>
+          <span data-i18n="lbl_lang">Language / Sprache</span>
           <select id="langSelect">
             <option value="en">🇺🇸 English</option>
             <option value="de">🇩🇪 Deutsch</option>
@@ -40,7 +38,7 @@
         </label>
         
         <label class="search-wrapper">
-          <span>Find Recipe / Suche</span>
+          <span data-i18n="lbl_search">Find Recipe</span>
           <div style="position:relative;">
             <input id="q" list="recipeList" placeholder="Type or select..." autocomplete="off" />
             <button id="clearSearch" class="clear-btn" hidden>×</button>
@@ -49,9 +47,9 @@
         </label>
         
         <label>
-          <span>Base Spirit</span>
+          <span data-i18n="lbl_base">Base Spirit</span>
           <select id="base">
-            <option value="All">All / Alle</option>
+            <option value="All" data-i18n="opt_all">All</option>
             <option>Gin</option>
             <option>Rum</option>
             <option>Whiskey</option>
@@ -62,7 +60,7 @@
         </label>
 
         <label>
-          <span>Units / Einheit</span>
+          <span data-i18n="lbl_units">Units</span>
           <select id="units">
             <option value="ml">Milliliters (ml)</option>
             <option value="cl">Centiliters (cl)</option>
@@ -72,20 +70,20 @@
       </div>
 
       <details>
-        <summary>Pantry — Filter by what you have</summary>
+        <summary data-i18n="lbl_pantry_head">Pantry — Filter by what you have</summary>
         <div class="pantry-controls" style="margin: 10px 0; display:flex; justify-content:space-between; align-items:center;">
-            <small style="color:var(--muted)">Select ingredients to see what you can make.</small>
-            <button id="clearPantry" class="button link" style="font-size:14px;">❌ Clear Selection</button>
+            <small style="color:var(--muted)" data-i18n="lbl_pantry_sub">Select ingredients to see what you can make.</small>
+            <button id="clearPantry" class="button link" style="font-size:14px;" data-i18n="btn_clear">❌ Clear Selection</button>
         </div>
         <div id="pantry" class="pantry"></div>
       </details>
 
       <div class="row scale-row">
         <label>
-          <span>Scale by</span>
+          <span data-i18n="lbl_scale">Scale by</span>
           <select id="scaleMode">
-            <option value="servings">Servings / Portionen</option>
-            <option value="ml">Target ml (Total)</option>
+            <option value="servings" data-i18n="opt_servings">Servings</option>
+            <option value="ml" data-i18n="opt_target">Target ml (Total)</option>
           </select>
         </label>
         <label>
@@ -99,24 +97,24 @@
 
     <section id="barback" class="card">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <h2 style="margin:0;">Shopping List</h2>
+        <h2 style="margin:0;" data-i18n="lbl_shop_head">Shopping List</h2>
         <div class="bb-actions">
-          <button id="printSheet" class="primary">Print</button>
+          <button id="printSheet" class="primary" data-i18n="btn_print">Print</button>
         </div>
       </div>
       
-      <div class="bb-info" style="margin-bottom:10px; font-size:14px; color:var(--muted);">
+      <div class="bb-info" style="margin-bottom:10px; font-size:14px; color:var(--muted);" data-i18n="lbl_shop_sub">
         Add recipes above to see total ingredients needed here.
       </div>
       <span class="bb-list" id="bbList" style="display:block;margin-bottom:10px;"></span>
 
       <div class="checkbox-row">
-        <label class="check-label"><input type="checkbox" id="includeGarnish" checked> Include garnish</label>
-        <label class="check-label"><input type="checkbox" id="roundBottles"> Round to 750ml bottles</label>
+        <label class="check-label"><input type="checkbox" id="includeGarnish" checked> <span data-i18n="lbl_garnish">Include garnish</span></label>
+        <label class="check-label"><input type="checkbox" id="roundBottles"> <span data-i18n="lbl_round">Round to 750ml bottles</span></label>
       </div>
       <table class="bb-table" id="bbTable">
         <thead>
-          <tr><th>Ingredient</th><th>Total Qty</th><th>As (cl/oz)</th></tr>
+          <tr><th data-i18n="th_ing">Ingredient</th><th data-i18n="th_qty">Total Qty</th><th>As (cl/oz)</th></tr>
         </thead>
         <tbody></tbody>
       </table>
