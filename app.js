@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (v7.0 - Smart Filter) */
+/* app.js - Pixel & Pour Cocktail Calculator (v8.0 - Universal Bottle Filter) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -31,7 +31,7 @@ const selected = new Set();
 const barBack = new Map();
 let CURRENT_LANG = 'en';
 
-const ESSENTIALS = ["Eiswürfel", "Zucker", "Salz", "Limette", "Zitrone", "Orange", "Minze", "Oliven"];
+const ESSENTIALS = ["Eiswürfel", "Zucker", "Salz", "Limette", "Zitrone", "Orange", "Minze", "Oliven", "Kirsche"];
 const HIDDEN_SPECIFICS = [
     "Bourbon Whiskey", "Rye Whiskey", "Canadian Whisky", "Scotch Whisky",
     "Weißer Rum", "Dunkler Rum", "Brauner Rum", "Aged Rum",
@@ -131,12 +131,13 @@ function convertQty(qtyMl) {
 
 function scaledMl(ml) { return ml * Math.max(0.1, Number(scaleValue.value || 1)); }
 
-function matchesSelection(ingName) {
-  if (selected.has(ingName)) return true;
+// Updated: matchesSelection now accepts a 'subset' to check against (default is global 'selected')
+function matchesSelection(ingName, subset = selected) {
+  if (subset.has(ingName)) return true;
   const sub = SUBS[ingName];
-  if (sub && sub.some(s => selected.has(s))) return true;
+  if (sub && sub.some(s => subset.has(s))) return true;
   for (const [label, pattern] of Object.entries(GENERICS)) {
-    if (!selected.has(label)) continue;
+    if (!subset.has(label)) continue;
     try { if (new RegExp(pattern, 'i').test(ingName)) return true; } catch (e) { }
   }
   return false;
@@ -208,29 +209,26 @@ function render() {
       return;
   }
 
-  // --- SMART PANTRY FILTER ---
-  // Identify if any "Spirits" are selected in the pantry.
-  // If yes, we filter the list to require at least one match.
-  const selectedSpirits = new Set();
-  selected.forEach(s => { if(typeOf(s) === 'Spirit') selectedSpirits.add(s); });
+  // --- SMART PANTRY FILTER (v8.0) ---
+  // Create a subset of "Active Filters" (Any selected item that is NOT an Essential)
+  const activeFilters = new Set();
+  selected.forEach(s => {
+      if (!ESSENTIALS.includes(s)) activeFilters.add(s);
+  });
 
   let list = RECIPES.filter(r => {
+    // 1. Base Filter
     const matchesBase = bv === 'All' || (r.base && r.base.includes(bv));
+    // 2. Search Filter
     const matchesSearch = qv === '' || r.name.toLowerCase().includes(qv);
     
-    // Smart Filter: If spirits are selected in pantry, recipe MUST match at least one (via substitutions too)
+    // 3. Pantry Bottle Filter
+    // If you selected Bottles (Campari, Gin, etc.), the recipe MUST use at least one of them.
     let matchesPantry = true;
-    if (selectedSpirits.size > 0) {
-        // Does this recipe contain any ingredient that matches the selected spirits?
+    if (activeFilters.size > 0) {
         matchesPantry = r.ingredients.some(ing => {
-            // Check direct name
-            if (selectedSpirits.has(ing.name)) return true;
-            // Check Subs (e.g. Recipe asks for "Bourbon", you have "Whiskey (any)")
-            const subList = SUBS[ing.name]; 
-            if (subList && subList.some(s => selectedSpirits.has(s))) return true;
-            // Check Reverse Subs (Recipe asks for "Gin", does selected "Gin" match?)
-            // Usually matched via matchesSelection logic, but here we check existence.
-            return matchesSelection(ing.name); 
+            // Check if this ingredient matches any of our Active Filters
+            return matchesSelection(ing.name, activeFilters);
         });
     }
 
