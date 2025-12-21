@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (v12.0 - German Crash Fix) */
+/* app.js - Pixel & Pour Cocktail Calculator (v13.0 - Full Translation Fix) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -57,6 +57,9 @@ const DICT = {
             welcome_text: "Select a Base Spirit, Search for a drink, or filter by your Pantry ingredients to get started.",
             qty_count: "Count / As needed", cat_essentials: "Essentials",
             missing: "Missing:", makeable: "You have everything!",
+            item_s: "item(s)", 
+            add_sheet: "+ Shopping List",
+            
             cat_spirit: "Spirits", cat_liqueur: "Liqueurs", cat_wine_bubbly: "Wine & Bubbly", cat_mixer_na: "Mixers / Other",
             servings_label: "Servings", target_label: "Target ml"
         },
@@ -76,15 +79,24 @@ const DICT = {
             welcome_text: "Wähle eine Basis, suche einen Drink oder filtere nach deinen Zutaten.",
             qty_count: "Stück / Nach Bedarf", cat_essentials: "Basics",
             missing: "Fehlt:", makeable: "Alles da!",
+            item_s: "Zutat(en)",
+            add_sheet: "+ Einkaufsliste",
+
             cat_spirit: "Spirituosen", cat_liqueur: "Liköre", cat_wine_bubbly: "Wein & Sekt", cat_mixer_na: "Mixer / Sonstiges",
             servings_label: "Portionen", target_label: "Zielmenge"
         }
     },
     ing: {
-        // German Key -> English Value Map
+        // --- 1. Methods & Glasses ---
+        "Stir": "Rühren", "Shake": "Schütteln", "Build": "Bauen", "Muddle": "Zerstoßen", 
+        "Shake + top": "Schütteln + Auffüllen", "Blend/Shake": "Mixen/Schütteln", "Roll/Stir": "Rollen/Rühren",
+        "Tumbler": "Tumbler", "Martini": "Martini-Glas", "Coupe": "Schale", "Highball": "Highball-Glas",
+        "Longdrink": "Longdrink-Glas", "Mule Mug": "Kupferbecher", "Wine Glass": "Weinglas", "Flute": "Sektflöte", "Julep Cup": "Julep-Becher",
+
+        // --- 2. Ingredients ---
         "Eiswürfel": "Ice Cubes", "Crushed Ice": "Crushed Ice", "Zucker": "Sugar", "Salz": "Salt", "Pfeffer": "Pepper",
         "Limette": "Lime", "Zitrone": "Lemon", "Orange": "Orange", "Minze": "Mint", "Oliven": "Olives", "Kirsche": "Cherry",
-        "Gin": "Gin", "Rum (any)": "Rum (Any)", "Whiskey (any)": "Whiskey (Any)", "Vodka": "Vodka", "Tequila": "Tequila",
+        "Gin": "Gin", "Rum (any)": "Rum (Alle)", "Whiskey (any)": "Whiskey (Alle)", "Vodka": "Vodka", "Tequila": "Tequila",
         "Cachaça": "Cachaça", "Cognac": "Cognac", "Brandy": "Brandy",
         "Kaffeelikör": "Coffee Liqueur", "Campari": "Campari", "Aperol": "Aperol", "Amaretto": "Amaretto",
         "Maraschino": "Maraschino", "Cream Liqueur": "Cream Liqueur",
@@ -97,7 +109,35 @@ const DICT = {
         "Zuckersirup": "Sugar Syrup", "Mandelsirup": "Orgeat", "Grenadine": "Grenadine", "Honigsirup": "Honey Syrup",
         "Sahne": "Cream", "Milch": "Milk", "Kokosnusscreme": "Coconut Cream",
         "Eiweiß": "Egg White", "Worcestershiresauce": "Worcestershire Sauce", "Angostura Bitters": "Angostura Bitters",
-        "Pfirsichpüree": "Peach Puree"
+        "Pfirsichpüree": "Peach Puree",
+
+        // --- 3. Instructions (Common Phrases) ---
+        // Note: For exact matching, these must match the JSON exactly.
+        "Stir ingredients with ice. Strain over fresh ice. Garnish with orange.": "Auf Eis rühren. Auf frisches Eis abseihen. Mit Orange garnieren.",
+        "Stir with ice. Strain into chilled glass. Garnish with olive.": "Auf Eis rühren. In gekühltes Glas abseihen. Mit Olive garnieren.",
+        "Shake with ice. Fine strain.": "Mit Eis schütteln. Fein abseihen.",
+        "Shake with ice. Strain into salt-rimmed glass.": "Mit Eis schütteln. In Glas mit Salzrand abseihen.",
+        "Build over ice. Float cream.": "Auf Eis bauen. Sahne darüberschichten (floaten).",
+        "Build in glass over ice. Stir.": "Im Glas auf Eis bauen. Umrühren.",
+        "Shake hard. Strain.": "Kräftig schütteln. Abseihen.",
+        "Muddle mint. Add ingredients/ice. Top with soda.": "Minze andrücken. Zutaten/Eis dazu. Mit Soda toppen.",
+        "Build in mug over ice.": "Im Becher auf Eis bauen.",
+        "Build over ice.": "Auf Eis bauen.",
+        "Stir with ice. Garnish with celery.": "Auf Eis rühren. Mit Sellerie garnieren.",
+        "Shake with ice. Strain.": "Mit Eis schütteln. Abseihen.",
+        "Shake (no soda). Top with soda.": "Schütteln (ohne Soda). Mit Soda toppen.",
+        "Shake hard. Pour unstrained.": "Kräftig schütteln. Ungeseiht ins Glas gießen.",
+        "Shake or blend.": "Schütteln oder im Mixer blenden.",
+        "Build in glass over ice.": "Im Glas auf Eis bauen.",
+        "Muddle lime/sugar. Add ice/cachaça.": "Limette/Zucker zerstoßen. Eis/Cachaça dazu.",
+        "Shake. Strain. Top with soda.": "Schütteln. Abseihen. Mit Soda toppen.",
+        "Pour puree. Top gently.": "Püree ins Glas. Vorsichtig auffüllen.",
+        "Shake. Strain into flute. Top.": "Schütteln. In Flöte abseihen. Auffüllen.",
+        "Shake with ice. Strain.": "Mit Eis schütteln. Abseihen.",
+        "Build in glass.": "Im Glas bauen.",
+        "Muddle mint. Add ice/bourbon. Stir until frosted.": "Minze andrücken. Eis/Bourbon dazu. Rühren bis Glas beschlägt.",
+        "Build. Sink grenadine.": "Bauen. Grenadine hineinsinken lassen.",
+        "Shake all spirits/sour. Strain. Top with Cola.": "Spirituosen/Sours schütteln. Abseihen. Mit Cola toppen."
     }
 };
 
@@ -121,23 +161,13 @@ async function initData() {
   } catch (err) { results.innerHTML = `<div class="card" style="color:var(--fail); padding:20px;">Error Loading Data.</div>`; }
 }
 
-// FIXED TRANSLATION FUNCTION
 function t(key, type='ui') {
-    // 1. Ingredients Logic
+    if (CURRENT_LANG === 'de') return DICT[type].de[key] || key;
     if (type === 'ing') {
-        if (CURRENT_LANG === 'en') {
-            return DICT.ing[key] || key; // Translate German -> English
-        }
-        // If German, just return the key (because the data source is already German)
+        if (CURRENT_LANG === 'en') return DICT.ing[key] || key;
         return key; 
     }
-
-    // 2. UI Labels Logic (Nested Dictionary)
-    if (DICT.ui[CURRENT_LANG] && DICT.ui[CURRENT_LANG][key]) {
-        return DICT.ui[CURRENT_LANG][key];
-    }
-    // Fallback to English if translation missing
-    return DICT.ui.en[key] || key;
+    return DICT.ui.en[key] || key; 
 }
 
 function updateStaticLabels() {
@@ -282,10 +312,12 @@ function render() {
     const missing = getMissingIngredients(r);
     const isMakeable = missing.length === 0;
     
+    // UPDATED: Using dynamic 'item_s' label from dictionary
     const statusBadge = isMakeable && selected.size > 0
         ? `<div class="status-bar ok">✅ ${t('makeable')}</div>` 
-        : (selected.size > 0 ? `<div class="status-bar missing">${t('missing')} ${missing.length} item(s)</div>` : '');
+        : (selected.size > 0 ? `<div class="status-bar missing">${t('missing')} ${missing.length} ${t('item_s')}</div>` : '');
 
+    // UPDATED: Added t() wrapper around method, glass, and instructions
     const ings = r.ingredients.map(i => {
       const ml = scaledMl(i.qtyMl || 0);
       const [v, u] = convertQty(ml);
@@ -311,9 +343,9 @@ function render() {
       <div style="display:flex;justify-content:space-between;align-items:start; padding-top:10px;">
         <h3 style="margin:0;">${icon} ${r.name}</h3>
       </div>
-      <div class="meta">${t('method')}: ${r.method} • ${t('glass')}: ${r.glass}</div>
+      <div class="meta">${t('method')}: ${t(r.method, 'ing')} • ${t('glass')}: ${t(r.glass, 'ing')}</div>
       <div class="ingredients" style="margin:10px 0;padding:12px;background:var(--bg);border-radius:8px;">${ings}</div>
-      <div style="font-style:italic;font-size:14px;margin-bottom:10px;line-height:1.5;">${r.instructions}</div>
+      <div style="font-style:italic;font-size:14px;margin-bottom:10px;line-height:1.5;">${t(r.instructions, 'ing')}</div>
       <div style="margin-top:auto;">
         <button class="primary" data-add="${r.id}">${t('add_sheet')}</button>
       </div>
