@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (v5.0 - Relaxed Mode) */
+/* app.js - Pixel & Pour Cocktail Calculator (v6.0 - Polished) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -31,12 +31,12 @@ const selected = new Set();
 const barBack = new Map();
 let CURRENT_LANG = 'en';
 
-// -- Essentials (Always show these in Pantry) --
+// -- Essentials (Always show in Pantry) --
 const ESSENTIALS = [
     "Eiswürfel", "Zucker", "Salz", "Limette", "Zitrone", "Orange", "Minze", "Oliven"
 ];
 
-// -- Items to HIDE from Pantry (Too specific, we rely on Generics) --
+// -- Items to HIDE from Pantry --
 const HIDDEN_SPECIFICS = [
     "Bourbon Whiskey", "Rye Whiskey", "Canadian Whisky", "Scotch Whisky",
     "Weißer Rum", "Dunkler Rum", "Brauner Rum", "Aged Rum",
@@ -195,13 +195,10 @@ function renderPantry() {
   const groups = { Essentials:[], Spirit: [], Liqueur: [], 'Wine/Bubbly': [], 'Mixer/NA': [] };
   
   for (const ing of allIngredients) {
-    // Hide Specifics to clean up list (User uses "Rum (any)" instead)
     if (HIDDEN_SPECIFICS.includes(ing)) continue;
-
     const type = typeOf(ing);
     if(groups[type]) groups[type].push(ing); else groups['Mixer/NA'].push(ing);
   }
-  // Add Generics explicitly
   for (const label of Object.keys(GENERICS)) {
       const type = typeOf(label);
       if(groups[type]) groups[type].push(label);
@@ -248,11 +245,14 @@ function render() {
       return;
   }
 
-  // Filter ONLY by Search/Base (Ignore Pantry Strictness)
-  let list = RECIPES.filter(r => 
-    (bv === 'All' || (r.base && r.base.includes(bv))) &&
-    (qv === '' || r.name.toLowerCase().includes(qv))
-  );
+  // STRICT Base Filter + Relaxed Pantry Match
+  let list = RECIPES.filter(r => {
+    // 1. Base Filter (Strict)
+    const matchesBase = bv === 'All' || (r.base && r.base.includes(bv));
+    // 2. Search Filter (Strict)
+    const matchesSearch = qv === '' || r.name.toLowerCase().includes(qv);
+    return matchesBase && matchesSearch;
+  });
 
   // Sort: Makeable First
   list.sort((a, b) => {
@@ -271,7 +271,8 @@ function render() {
   results.innerHTML = list.map(r => {
     const missing = getMissingIngredients(r);
     const isMakeable = missing.length === 0;
-    // Badge Logic
+    
+    // Header Badge
     const statusBadge = isMakeable && selected.size > 0
         ? `<div class="status-bar ok">✅ ${t('makeable')}</div>` 
         : (selected.size > 0 ? `<div class="status-bar missing">${t('missing')} ${missing.length} item(s)</div>` : '');
@@ -285,9 +286,21 @@ function render() {
       const qtyDisplay = i.qtyMl ? `<span class="qty">${v} ${u}</span>` : '—';
       
       const isMissing = selected.size > 0 && !i.optional && !matchesSelection(i.name);
-      const style = isMissing ? 'color:var(--fail); font-weight:700;' : '';
-      const missingIcon = isMissing ? ' 🛒' : '';
-      return `<div style="${style}">${qtyDisplay} ${name}${label}${top}${missingIcon}</div>`;
+      // New: Check if owned (for green highlight)
+      const isOwned = selected.size > 0 && (i.optional || matchesSelection(i.name));
+
+      // Style Logic
+      let style = '';
+      let icon = '';
+      if (isMissing) {
+          style = 'color:var(--fail); font-weight:700;';
+          icon = ' 🛒'; // Shopping Cart for missing
+      } else if (isOwned) {
+          style = 'color:var(--ok); font-weight:600;';
+          icon = ' ✔'; // Checkmark for owned
+      }
+
+      return `<div style="${style}">${qtyDisplay} ${name}${label}${top}${icon}</div>`;
     }).join('');
 
     const icon = getGlassIcon(r.glass);
