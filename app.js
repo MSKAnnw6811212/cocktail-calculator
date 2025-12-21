@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (v13.0 - Full Translation Fix) */
+/* app.js - Pixel & Pour Cocktail Calculator (v14.0 - Total Translation Fix) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -42,7 +42,7 @@ const HIDDEN_SPECIFICS = [
 const DICT = {
     ui: {
         en: { 
-            // Static UI Labels
+            // Static UI Labels (Top Controls)
             lbl_lang: "Language", lbl_search: "Find Recipe", lbl_base: "Base Spirit", lbl_units: "Units",
             lbl_pantry_head: "Pantry — Filter by what you have", lbl_pantry_sub: "Select ingredients to see what you can make.",
             lbl_scale: "Scale by", lbl_shop_head: "Shopping List", lbl_shop_sub: "Add recipes above to see total ingredients needed here.",
@@ -51,16 +51,22 @@ const DICT = {
             opt_all: "All", opt_servings: "Servings", opt_target: "Target ml (Total)",
             th_ing: "Ingredient", th_qty: "Total Qty",
 
+            // Dynamic UI Labels (Recipe Cards)
+            lbl_method: "Method", lbl_glass: "Glass", 
+            lbl_missing: "Missing:", lbl_makeable: "You have everything!",
+            lbl_item_s: "item(s)", 
+            btn_add_sheet: "+ Shopping List",
+
             // Dynamic Text
             search_ph: "Type to search or browse...", 
             welcome_head: "Welcome to Pixel & Pour",
             welcome_text: "Select a Base Spirit, Search for a drink, or filter by your Pantry ingredients to get started.",
-            qty_count: "Count / As needed", cat_essentials: "Essentials",
-            missing: "Missing:", makeable: "You have everything!",
-            item_s: "item(s)", 
-            add_sheet: "+ Shopping List",
+            qty_count: "Count / As needed", 
             
-            cat_spirit: "Spirits", cat_liqueur: "Liqueurs", cat_wine_bubbly: "Wine & Bubbly", cat_mixer_na: "Mixers / Other",
+            // Pantry Categories
+            cat_essentials: "Essentials", cat_spirit: "Spirits", cat_liqueur: "Liqueurs", cat_wine_bubbly: "Wine & Bubbly", cat_mixer_na: "Mixers / Other",
+            
+            // Scale Labels
             servings_label: "Servings", target_label: "Target ml"
         },
         de: { 
@@ -73,29 +79,36 @@ const DICT = {
             opt_all: "Alle", opt_servings: "Portionen", opt_target: "Zielmenge (ml)",
             th_ing: "Zutat", th_qty: "Menge",
 
+            // Dynamic UI Labels
+            lbl_method: "Zubereitung", lbl_glass: "Glas", 
+            lbl_missing: "Fehlt:", lbl_makeable: "Alles da!",
+            lbl_item_s: "Zutat(en)", 
+            btn_add_sheet: "+ Einkaufsliste",
+
             // Dynamic Text
             search_ph: "Tippen zum Suchen...", 
             welcome_head: "Willkommen bei Pixel & Pour",
             welcome_text: "Wähle eine Basis, suche einen Drink oder filtere nach deinen Zutaten.",
-            qty_count: "Stück / Nach Bedarf", cat_essentials: "Basics",
-            missing: "Fehlt:", makeable: "Alles da!",
-            item_s: "Zutat(en)",
-            add_sheet: "+ Einkaufsliste",
-
-            cat_spirit: "Spirituosen", cat_liqueur: "Liköre", cat_wine_bubbly: "Wein & Sekt", cat_mixer_na: "Mixer / Sonstiges",
+            qty_count: "Stück / Nach Bedarf", 
+            
+            // Pantry Categories
+            cat_essentials: "Basics", cat_spirit: "Spirituosen", cat_liqueur: "Liköre", cat_wine_bubbly: "Wein & Sekt", cat_mixer_na: "Mixer / Sonstiges",
+            
+            // Scale Labels
             servings_label: "Portionen", target_label: "Zielmenge"
         }
     },
     ing: {
         // --- 1. Methods & Glasses ---
         "Stir": "Rühren", "Shake": "Schütteln", "Build": "Bauen", "Muddle": "Zerstoßen", 
-        "Shake + top": "Schütteln + Auffüllen", "Blend/Shake": "Mixen/Schütteln", "Roll/Stir": "Rollen/Rühren",
+        "Shake + top": "Schütteln + Auffüllen", "Blend/Shake": "Mixen/Schütteln", "Roll/Stir": "Rollen/Rühren", "Blend": "Mixen",
         "Tumbler": "Tumbler", "Martini": "Martini-Glas", "Coupe": "Schale", "Highball": "Highball-Glas",
         "Longdrink": "Longdrink-Glas", "Mule Mug": "Kupferbecher", "Wine Glass": "Weinglas", "Flute": "Sektflöte", "Julep Cup": "Julep-Becher",
+        "Großes Glas": "Großes Glas", "Glas": "Glas",
 
         // --- 2. Ingredients ---
         "Eiswürfel": "Ice Cubes", "Crushed Ice": "Crushed Ice", "Zucker": "Sugar", "Salz": "Salt", "Pfeffer": "Pepper",
-        "Limette": "Lime", "Zitrone": "Lemon", "Orange": "Orange", "Minze": "Mint", "Oliven": "Olives", "Kirsche": "Cherry",
+        "Limette": "Lime", "Zitrone": "Lemon", "Orange": "Orange", "Minze": "Mint", "Oliven": "Olives", "Kirsche": "Cherry", "Erdbeeren": "Strawberries", "Vanilleeis": "Vanilla Ice Cream",
         "Gin": "Gin", "Rum (any)": "Rum (Alle)", "Whiskey (any)": "Whiskey (Alle)", "Vodka": "Vodka", "Tequila": "Tequila",
         "Cachaça": "Cachaça", "Cognac": "Cognac", "Brandy": "Brandy",
         "Kaffeelikör": "Coffee Liqueur", "Campari": "Campari", "Aperol": "Aperol", "Amaretto": "Amaretto",
@@ -111,33 +124,34 @@ const DICT = {
         "Eiweiß": "Egg White", "Worcestershiresauce": "Worcestershire Sauce", "Angostura Bitters": "Angostura Bitters",
         "Pfirsichpüree": "Peach Puree",
 
-        // --- 3. Instructions (Common Phrases) ---
-        // Note: For exact matching, these must match the JSON exactly.
+        // --- 3. Instructions (Refined) ---
         "Stir ingredients with ice. Strain over fresh ice. Garnish with orange.": "Auf Eis rühren. Auf frisches Eis abseihen. Mit Orange garnieren.",
         "Stir with ice. Strain into chilled glass. Garnish with olive.": "Auf Eis rühren. In gekühltes Glas abseihen. Mit Olive garnieren.",
         "Shake with ice. Fine strain.": "Mit Eis schütteln. Fein abseihen.",
         "Shake with ice. Strain into salt-rimmed glass.": "Mit Eis schütteln. In Glas mit Salzrand abseihen.",
-        "Build over ice. Float cream.": "Auf Eis bauen. Sahne darüberschichten (floaten).",
+        "Build over ice. Float cream.": "Auf Eis bauen. Sahne vorsichtig darüberschichten (floaten).",
         "Build in glass over ice. Stir.": "Im Glas auf Eis bauen. Umrühren.",
         "Shake hard. Strain.": "Kräftig schütteln. Abseihen.",
-        "Muddle mint. Add ingredients/ice. Top with soda.": "Minze andrücken. Zutaten/Eis dazu. Mit Soda toppen.",
+        "Muddle mint. Add ingredients/ice. Top with soda.": "Minze andrücken. Zutaten & Eis dazu. Mit Soda toppen.",
         "Build in mug over ice.": "Im Becher auf Eis bauen.",
-        "Build over ice.": "Auf Eis bauen.",
+        "Build over ice.": "Direkt auf Eis bauen.",
         "Stir with ice. Garnish with celery.": "Auf Eis rühren. Mit Sellerie garnieren.",
         "Shake with ice. Strain.": "Mit Eis schütteln. Abseihen.",
         "Shake (no soda). Top with soda.": "Schütteln (ohne Soda). Mit Soda toppen.",
-        "Shake hard. Pour unstrained.": "Kräftig schütteln. Ungeseiht ins Glas gießen.",
+        "Shake hard. Pour unstrained.": "Kräftig schütteln. Ungeseiht (mit Eis) ins Glas gießen.",
         "Shake or blend.": "Schütteln oder im Mixer blenden.",
         "Build in glass over ice.": "Im Glas auf Eis bauen.",
-        "Muddle lime/sugar. Add ice/cachaça.": "Limette/Zucker zerstoßen. Eis/Cachaça dazu.",
+        "Muddle lime/sugar. Add ice/cachaça.": "Limette & Zucker zerstoßen. Eis & Cachaça dazu.",
         "Shake. Strain. Top with soda.": "Schütteln. Abseihen. Mit Soda toppen.",
-        "Pour puree. Top gently.": "Püree ins Glas. Vorsichtig auffüllen.",
+        "Pour puree. Top gently.": "Püree in das Glas geben. Vorsichtig mit Schaumwein auffüllen.",
         "Shake. Strain into flute. Top.": "Schütteln. In Flöte abseihen. Auffüllen.",
-        "Shake with ice. Strain.": "Mit Eis schütteln. Abseihen.",
         "Build in glass.": "Im Glas bauen.",
-        "Muddle mint. Add ice/bourbon. Stir until frosted.": "Minze andrücken. Eis/Bourbon dazu. Rühren bis Glas beschlägt.",
-        "Build. Sink grenadine.": "Bauen. Grenadine hineinsinken lassen.",
-        "Shake all spirits/sour. Strain. Top with Cola.": "Spirituosen/Sours schütteln. Abseihen. Mit Cola toppen."
+        "Muddle mint. Add ice/bourbon. Stir until frosted.": "Minze andrücken. Eis/Bourbon dazu. Rühren bis das Glas beschlägt.",
+        "Build. Sink grenadine.": "Bauen. Grenadine am Rand hineinsinken lassen.",
+        "Shake all spirits/sour. Strain. Top with Cola.": "Spirituosen & Sours schütteln. Abseihen. Mit Cola toppen.",
+        "Im Becher über Eis bauen; Limette.": "Build in mug over ice. Add lime.",
+        "Alles im Mixer pürieren; hohes Glas.": "Blend everything. Pour into tall glass.",
+        "Im Glas bauen; umrühren.": "Build in glass. Stir."
     }
 };
 
@@ -249,6 +263,7 @@ function renderPantry() {
   }
 
   const order = ['Essentials', 'Spirit', 'Liqueur', 'Wine/Bubbly', 'Mixer/NA'];
+  // Correctly mapping internal keys to UI dictionary keys
   const catKeys = { 'Essentials': 'cat_essentials', 'Spirit': 'cat_spirit', 'Liqueur': 'cat_liqueur', 'Wine/Bubbly': 'cat_wine_bubbly', 'Mixer/NA': 'cat_mixer_na' };
 
   pantryBox.innerHTML = order.map(g => {
@@ -312,12 +327,11 @@ function render() {
     const missing = getMissingIngredients(r);
     const isMakeable = missing.length === 0;
     
-    // UPDATED: Using dynamic 'item_s' label from dictionary
+    // UPDATED: Using dynamic 'lbl_missing' and 'lbl_makeable' from dictionary
     const statusBadge = isMakeable && selected.size > 0
-        ? `<div class="status-bar ok">✅ ${t('makeable')}</div>` 
-        : (selected.size > 0 ? `<div class="status-bar missing">${t('missing')} ${missing.length} ${t('item_s')}</div>` : '');
+        ? `<div class="status-bar ok">✅ ${t('lbl_makeable')}</div>` 
+        : (selected.size > 0 ? `<div class="status-bar missing">${t('lbl_missing')} ${missing.length} ${t('lbl_item_s')}</div>` : '');
 
-    // UPDATED: Added t() wrapper around method, glass, and instructions
     const ings = r.ingredients.map(i => {
       const ml = scaledMl(i.qtyMl || 0);
       const [v, u] = convertQty(ml);
@@ -338,16 +352,17 @@ function render() {
 
     const icon = getGlassIcon(r.glass);
 
+    // UPDATED: Using 'lbl_method', 'lbl_glass', and 'btn_add_sheet' from dictionary
     return `<article class="recipe ${isMakeable ? '' : 'faded'}">
       ${statusBadge}
       <div style="display:flex;justify-content:space-between;align-items:start; padding-top:10px;">
         <h3 style="margin:0;">${icon} ${r.name}</h3>
       </div>
-      <div class="meta">${t('method')}: ${t(r.method, 'ing')} • ${t('glass')}: ${t(r.glass, 'ing')}</div>
+      <div class="meta">${t('lbl_method')}: ${t(r.method, 'ing')} • ${t('lbl_glass')}: ${t(r.glass, 'ing')}</div>
       <div class="ingredients" style="margin:10px 0;padding:12px;background:var(--bg);border-radius:8px;">${ings}</div>
       <div style="font-style:italic;font-size:14px;margin-bottom:10px;line-height:1.5;">${t(r.instructions, 'ing')}</div>
       <div style="margin-top:auto;">
-        <button class="primary" data-add="${r.id}">${t('add_sheet')}</button>
+        <button class="primary" data-add="${r.id}">${t('btn_add_sheet')}</button>
       </div>
     </article>`;
   }).join('');
