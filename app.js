@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (v9.0 - German Fixed) */
+/* app.js - Pixel & Pour Cocktail Calculator (v10.0 - Final Fix) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -38,6 +38,7 @@ const HIDDEN_SPECIFICS = [
     "Vermouth Rosso", "Vermouth Dry", "Triple Sec", "Cointreau"
 ];
 
+// -- THE DICTIONARY (This is what makes the language switch work) --
 const DICT = {
     ui: {
         en: { 
@@ -112,13 +113,10 @@ async function initData() {
 
 function t(key, type='ui') {
     if (CURRENT_LANG === 'de') return DICT[type].de[key] || key;
-    // For ingredients: The Data is German, so if lang is EN, translate. If DE, keep raw.
-    // NOTE: Your JSON data is in German ("Zitronensaft"). 
-    // If Lang is English -> Look up "Zitronensaft" in DICT.ing -> Return "Lemon Juice"
-    // If Lang is German -> Return "Zitronensaft" (Raw Key)
+    // English Translation Logic
     if (type === 'ing') {
         if (CURRENT_LANG === 'en') return DICT.ing[key] || key;
-        return key; // Data is already German
+        return key; 
     }
     return DICT.ui.en[key] || key; 
 }
@@ -193,7 +191,7 @@ function renderPantry() {
   }
 
   const order = ['Essentials', 'Spirit', 'Liqueur', 'Wine/Bubbly', 'Mixer/NA'];
-  // Map internal keys to UI keys for translation
+  // Keys to look up in the DICT
   const catKeys = {
       'Essentials': 'cat_essentials', 'Spirit': 'cat_spirit', 'Liqueur': 'cat_liqueur', 
       'Wine/Bubbly': 'cat_wine_bubbly', 'Mixer/NA': 'cat_mixer_na'
@@ -203,13 +201,13 @@ function renderPantry() {
     const list = groups[g];
     if(!list || list.length === 0) return '';
     
-    // NEW: Translate Category Header
+    // TRANSLATE HEADER
     const title = t(catKeys[g], 'ui'); 
     
     return `<div class="pantry-group"><strong>${title}</strong><div class="pantry-grid">` +
       [...new Set(list)].sort().map(name => {
          const isChecked = selected.has(name) ? 'checked' : '';
-         // Translate Ingredient Label
+         // TRANSLATE INGREDIENT
          return `<label class="pantry-item"><input type="checkbox" value="${name}" ${isChecked}> ${t(name, 'ing')}</label>`;
       }).join('') + `</div></div>`;
   }).join('');
@@ -240,6 +238,7 @@ function render() {
       return;
   }
 
+  // Active Filter Logic
   const activeFilters = new Set();
   selected.forEach(s => { if (!ESSENTIALS.includes(s)) activeFilters.add(s); });
 
