@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (v8.0 - Universal Bottle Filter) */
+/* app.js - Pixel & Pour Cocktail Calculator (v9.0 - German Fixed) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -47,7 +47,9 @@ const DICT = {
             welcome_head: "Welcome to Pixel & Pour",
             welcome_text: "Select a Base Spirit, Search for a drink, or filter by your Pantry ingredients to get started.",
             qty_count: "Count / As needed", cat_essentials: "Essentials",
-            missing: "Missing:", makeable: "You have everything!"
+            missing: "Missing:", makeable: "You have everything!",
+            // Categories
+            cat_spirit: "Spirits", cat_liqueur: "Liqueurs", cat_wine_bubbly: "Wine & Bubbly", cat_mixer_na: "Mixers / Other"
         },
         de: { 
             servings: "Portionen", target_ml: "Zielmenge (ml)", 
@@ -56,24 +58,37 @@ const DICT = {
             welcome_head: "Willkommen bei Pixel & Pour",
             welcome_text: "Wähle eine Basis, suche einen Drink oder filtere nach deinen Zutaten.",
             qty_count: "Stück / Nach Bedarf", cat_essentials: "Basics",
-            missing: "Fehlt:", makeable: "Alles da!"
+            missing: "Fehlt:", makeable: "Alles da!",
+            // Categories
+            cat_spirit: "Spirituosen", cat_liqueur: "Liköre", cat_wine_bubbly: "Wein & Sekt", cat_mixer_na: "Mixer / Sonstiges"
         }
     },
     ing: {
-        "Zitronensaft": "Lemon Juice", "Limettensaft": "Lime Juice", "Zuckersirup": "Sugar Syrup",
-        "Sodawasser": "Soda Water", "Weißer Rum": "White Rum", "Dunkler Rum": "Dark Rum",
-        "Minze": "Mint", "Mandelsirup": "Orgeat", "Cranberrysaft": "Cranberry Juice",
-        "Sahne": "Cream", "Milch": "Milk", "Ananassaft": "Pineapple Juice",
-        "Kokosnusscreme": "Coconut Cream", "Eiweiß": "Egg White", "Kaffeelikör": "Coffee Liqueur",
-        "Weißer Rohrzucker": "White Cane Sugar", "Limette": "Lime", "Ingwerbier": "Ginger Beer",
-        "Wodka": "Vodka", "Orangensaft": "Orange Juice", "Tomatensaft": "Tomato Juice",
-        "Staudensellerie": "Celery", "Worcestershiresauce": "Worcestershire Sauce",
-        "Pfeffer": "Pepper", "Salz": "Salt", "Zitrone": "Lemon", "Brauner Rum": "Aged Rum",
-        "Cola": "Cola", "Tonic Water": "Tonic Water", "Schaumwein": "Sparkling Wine",
-        "Pfirsichpüree": "Peach Puree", "Aperol": "Aperol", "Prosecco": "Prosecco",
-        "Cachaça": "Cachaça", "Grapefruit Soda": "Grapefruit Soda", "Eiswürfel": "Ice Cubes",
-        "Crushed Ice": "Crushed Ice", "Zucker": "Sugar", "Oliven": "Olives", "Kirsche": "Cherry",
-        "Orange": "Orange", "Rum (any)": "Rum (Any)", "Whiskey (any)": "Whiskey (Any)"
+        // Essentials
+        "Eiswürfel": "Ice Cubes", "Crushed Ice": "Crushed Ice", "Zucker": "Sugar", "Salz": "Salt", "Pfeffer": "Pepper",
+        "Limette": "Lime", "Zitrone": "Lemon", "Orange": "Orange", "Minze": "Mint", "Oliven": "Olives", "Kirsche": "Cherry",
+        
+        // Spirits (Generics)
+        "Gin": "Gin", "Rum (any)": "Rum (Alle)", "Whiskey (any)": "Whiskey (Alle)", "Vodka": "Vodka", "Tequila": "Tequila",
+        "Cachaça": "Cachaça", "Cognac": "Cognac", "Brandy": "Brandy",
+
+        // Liqueurs
+        "Kaffeelikör": "Coffee Liqueur", "Campari": "Campari", "Aperol": "Aperol", "Amaretto": "Amaretto",
+        "Maraschino": "Maraschino", "Cream Liqueur": "Sahnelikör",
+        
+        // Wines
+        "Prosecco": "Prosecco", "Champagner": "Champagne", "Rotwein": "Red Wine", "Weißwein": "White Wine", 
+        "Wermut": "Vermouth", "Sherry": "Sherry", "Portwein": "Port",
+        
+        // Mixers & Juices
+        "Zitronensaft": "Lemon Juice", "Limettensaft": "Lime Juice", "Orangensaft": "Orange Juice",
+        "Ananassaft": "Pineapple Juice", "Cranberrysaft": "Cranberry Juice", "Tomatensaft": "Tomato Juice",
+        "Grapefruit Soda": "Grapefruit Soda", "Cola": "Cola", "Sodawasser": "Soda Water", "Tonic Water": "Tonic Water",
+        "Ingwerbier": "Ginger Beer", "Ginger Ale": "Ginger Ale",
+        "Zuckersirup": "Sugar Syrup", "Mandelsirup": "Orgeat", "Grenadine": "Grenadine", "Honigsirup": "Honey Syrup",
+        "Sahne": "Cream", "Milch": "Milk", "Kokosnusscreme": "Coconut Cream",
+        "Eiweiß": "Egg White", "Worcestershiresauce": "Worcestershire Sauce", "Angostura Bitters": "Angostura Bitters",
+        "Pfirsichpüree": "Peach Puree"
     }
 };
 
@@ -97,7 +112,14 @@ async function initData() {
 
 function t(key, type='ui') {
     if (CURRENT_LANG === 'de') return DICT[type].de[key] || key;
-    if (type === 'ing') return DICT.ing[key] || key; 
+    // For ingredients: The Data is German, so if lang is EN, translate. If DE, keep raw.
+    // NOTE: Your JSON data is in German ("Zitronensaft"). 
+    // If Lang is English -> Look up "Zitronensaft" in DICT.ing -> Return "Lemon Juice"
+    // If Lang is German -> Return "Zitronensaft" (Raw Key)
+    if (type === 'ing') {
+        if (CURRENT_LANG === 'en') return DICT.ing[key] || key;
+        return key; // Data is already German
+    }
     return DICT.ui.en[key] || key; 
 }
 
@@ -131,7 +153,6 @@ function convertQty(qtyMl) {
 
 function scaledMl(ml) { return ml * Math.max(0.1, Number(scaleValue.value || 1)); }
 
-// Updated: matchesSelection now accepts a 'subset' to check against (default is global 'selected')
 function matchesSelection(ingName, subset = selected) {
   if (subset.has(ingName)) return true;
   const sub = SUBS[ingName];
@@ -172,13 +193,23 @@ function renderPantry() {
   }
 
   const order = ['Essentials', 'Spirit', 'Liqueur', 'Wine/Bubbly', 'Mixer/NA'];
+  // Map internal keys to UI keys for translation
+  const catKeys = {
+      'Essentials': 'cat_essentials', 'Spirit': 'cat_spirit', 'Liqueur': 'cat_liqueur', 
+      'Wine/Bubbly': 'cat_wine_bubbly', 'Mixer/NA': 'cat_mixer_na'
+  };
+
   pantryBox.innerHTML = order.map(g => {
     const list = groups[g];
     if(!list || list.length === 0) return '';
-    const title = g === 'Essentials' ? t('cat_essentials') : g;
+    
+    // NEW: Translate Category Header
+    const title = t(catKeys[g], 'ui'); 
+    
     return `<div class="pantry-group"><strong>${title}</strong><div class="pantry-grid">` +
       [...new Set(list)].sort().map(name => {
          const isChecked = selected.has(name) ? 'checked' : '';
+         // Translate Ingredient Label
          return `<label class="pantry-item"><input type="checkbox" value="${name}" ${isChecked}> ${t(name, 'ing')}</label>`;
       }).join('') + `</div></div>`;
   }).join('');
@@ -209,29 +240,16 @@ function render() {
       return;
   }
 
-  // --- SMART PANTRY FILTER (v8.0) ---
-  // Create a subset of "Active Filters" (Any selected item that is NOT an Essential)
   const activeFilters = new Set();
-  selected.forEach(s => {
-      if (!ESSENTIALS.includes(s)) activeFilters.add(s);
-  });
+  selected.forEach(s => { if (!ESSENTIALS.includes(s)) activeFilters.add(s); });
 
   let list = RECIPES.filter(r => {
-    // 1. Base Filter
     const matchesBase = bv === 'All' || (r.base && r.base.includes(bv));
-    // 2. Search Filter
     const matchesSearch = qv === '' || r.name.toLowerCase().includes(qv);
-    
-    // 3. Pantry Bottle Filter
-    // If you selected Bottles (Campari, Gin, etc.), the recipe MUST use at least one of them.
     let matchesPantry = true;
     if (activeFilters.size > 0) {
-        matchesPantry = r.ingredients.some(ing => {
-            // Check if this ingredient matches any of our Active Filters
-            return matchesSelection(ing.name, activeFilters);
-        });
+        matchesPantry = r.ingredients.some(ing => matchesSelection(ing.name, activeFilters));
     }
-
     return matchesBase && matchesSearch && matchesPantry;
   });
 
