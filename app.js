@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (v10.0 - Final Fix) */
+/* app.js - Pixel & Pour Cocktail Calculator (v11.0 - Full UI Translation) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -38,50 +38,57 @@ const HIDDEN_SPECIFICS = [
     "Vermouth Rosso", "Vermouth Dry", "Triple Sec", "Cointreau"
 ];
 
-// -- THE DICTIONARY (This is what makes the language switch work) --
+// -- THE DICTIONARY --
 const DICT = {
     ui: {
         en: { 
-            servings: "Servings", target_ml: "Target ml (total)", 
-            search_ph: "Type to search or browse...", base_all: "All Bases",
-            add_sheet: "+ Shopping List", glass: "Glass", method: "Method", ingredients: "Ingredients",
+            // Static UI Labels
+            lbl_lang: "Language", lbl_search: "Find Recipe", lbl_base: "Base Spirit", lbl_units: "Units",
+            lbl_pantry_head: "Pantry — Filter by what you have", lbl_pantry_sub: "Select ingredients to see what you can make.",
+            lbl_scale: "Scale by", lbl_shop_head: "Shopping List", lbl_shop_sub: "Add recipes above to see total ingredients needed here.",
+            lbl_garnish: "Include garnish", lbl_round: "Round to 750ml bottles",
+            btn_clear: "❌ Clear Selection", btn_print: "Print",
+            opt_all: "All", opt_servings: "Servings", opt_target: "Target ml (Total)",
+            th_ing: "Ingredient", th_qty: "Total Qty",
+
+            // Dynamic Text
+            search_ph: "Type to search or browse...", 
             welcome_head: "Welcome to Pixel & Pour",
             welcome_text: "Select a Base Spirit, Search for a drink, or filter by your Pantry ingredients to get started.",
             qty_count: "Count / As needed", cat_essentials: "Essentials",
             missing: "Missing:", makeable: "You have everything!",
-            // Categories
-            cat_spirit: "Spirits", cat_liqueur: "Liqueurs", cat_wine_bubbly: "Wine & Bubbly", cat_mixer_na: "Mixers / Other"
+            cat_spirit: "Spirits", cat_liqueur: "Liqueurs", cat_wine_bubbly: "Wine & Bubbly", cat_mixer_na: "Mixers / Other",
+            servings_label: "Servings", target_label: "Target ml"
         },
         de: { 
-            servings: "Portionen", target_ml: "Zielmenge (ml)", 
-            search_ph: "Tippen zum Suchen...", base_all: "Alle Basen",
-            add_sheet: "+ Einkaufsliste", glass: "Glas", method: "Methode", ingredients: "Zutaten",
+            // Static UI Labels
+            lbl_lang: "Sprache", lbl_search: "Rezept suchen", lbl_base: "Basis-Spirituose", lbl_units: "Einheit",
+            lbl_pantry_head: "Vorratsschrank — Was hast du da?", lbl_pantry_sub: "Wähle Zutaten, um passende Drinks zu finden.",
+            lbl_scale: "Skalieren", lbl_shop_head: "Einkaufsliste", lbl_shop_sub: "Füge oben Rezepte hinzu, um hier die Summen zu sehen.",
+            lbl_garnish: "Garnitur einrechnen", lbl_round: "Auf 750ml Flaschen runden",
+            btn_clear: "❌ Auswahl löschen", btn_print: "Drucken",
+            opt_all: "Alle", opt_servings: "Portionen", opt_target: "Zielmenge (ml)",
+            th_ing: "Zutat", th_qty: "Menge",
+
+            // Dynamic Text
+            search_ph: "Tippen zum Suchen...", 
             welcome_head: "Willkommen bei Pixel & Pour",
             welcome_text: "Wähle eine Basis, suche einen Drink oder filtere nach deinen Zutaten.",
             qty_count: "Stück / Nach Bedarf", cat_essentials: "Basics",
             missing: "Fehlt:", makeable: "Alles da!",
-            // Categories
-            cat_spirit: "Spirituosen", cat_liqueur: "Liköre", cat_wine_bubbly: "Wein & Sekt", cat_mixer_na: "Mixer / Sonstiges"
+            cat_spirit: "Spirituosen", cat_liqueur: "Liköre", cat_wine_bubbly: "Wein & Sekt", cat_mixer_na: "Mixer / Sonstiges",
+            servings_label: "Portionen", target_label: "Zielmenge"
         }
     },
     ing: {
-        // Essentials
         "Eiswürfel": "Ice Cubes", "Crushed Ice": "Crushed Ice", "Zucker": "Sugar", "Salz": "Salt", "Pfeffer": "Pepper",
         "Limette": "Lime", "Zitrone": "Lemon", "Orange": "Orange", "Minze": "Mint", "Oliven": "Olives", "Kirsche": "Cherry",
-        
-        // Spirits (Generics)
-        "Gin": "Gin", "Rum (any)": "Rum (Alle)", "Whiskey (any)": "Whiskey (Alle)", "Vodka": "Vodka", "Tequila": "Tequila",
+        "Gin": "Gin", "Rum (any)": "Rum (Any)", "Whiskey (any)": "Whiskey (Any)", "Vodka": "Vodka", "Tequila": "Tequila",
         "Cachaça": "Cachaça", "Cognac": "Cognac", "Brandy": "Brandy",
-
-        // Liqueurs
         "Kaffeelikör": "Coffee Liqueur", "Campari": "Campari", "Aperol": "Aperol", "Amaretto": "Amaretto",
-        "Maraschino": "Maraschino", "Cream Liqueur": "Sahnelikör",
-        
-        // Wines
+        "Maraschino": "Maraschino", "Cream Liqueur": "Cream Liqueur",
         "Prosecco": "Prosecco", "Champagner": "Champagne", "Rotwein": "Red Wine", "Weißwein": "White Wine", 
         "Wermut": "Vermouth", "Sherry": "Sherry", "Portwein": "Port",
-        
-        // Mixers & Juices
         "Zitronensaft": "Lemon Juice", "Limettensaft": "Lime Juice", "Orangensaft": "Orange Juice",
         "Ananassaft": "Pineapple Juice", "Cranberrysaft": "Cranberry Juice", "Tomatensaft": "Tomato Juice",
         "Grapefruit Soda": "Grapefruit Soda", "Cola": "Cola", "Sodawasser": "Soda Water", "Tonic Water": "Tonic Water",
@@ -107,13 +114,16 @@ async function initData() {
     const rData = await rRes.json();
     const sData = await sRes.json();
     RECIPES = rData.recipes; SUBS = sData.substitutions; GENERICS = sData.generic_families;
+    
+    // NEW: Update Language first
+    updateStaticLabels();
+    
     populateDatalist(); renderPantry(); render(); renderBarBack();
   } catch (err) { results.innerHTML = `<div class="card" style="color:var(--fail); padding:20px;">Error Loading Data.</div>`; }
 }
 
 function t(key, type='ui') {
     if (CURRENT_LANG === 'de') return DICT[type].de[key] || key;
-    // English Translation Logic
     if (type === 'ing') {
         if (CURRENT_LANG === 'en') return DICT.ing[key] || key;
         return key; 
@@ -121,11 +131,26 @@ function t(key, type='ui') {
     return DICT.ui.en[key] || key; 
 }
 
+// NEW: This function updates the hardcoded HTML labels
+function updateStaticLabels() {
+    // 1. Update elements with data-i18n attribute
+    $$('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        el.textContent = t(key, 'ui');
+    });
+
+    // 2. Update Placeholders
+    q.placeholder = t('search_ph', 'ui');
+    
+    // 3. Update Scale Label
+    scaleLabel.textContent = scaleMode.value === 'servings' ? t('servings_label') : t('target_label');
+}
+
 function getGlassIcon(glassType) {
     const g = (glassType || "").toLowerCase();
     if(g.includes('martini') || g.includes('coupe')) return '🍸';
     if(g.includes('tumbler') || g.includes('rocks')) return '🥃';
-    if(g.includes('long') || g.includes('highball')) return '🥤';
+    if(g.includes('long') || g.includes('highball') || g.includes('collins')) return '🥤';
     if(g.includes('mule') || g.includes('mug')) return '🍺';
     if(g.includes('flute') || g.includes('sekt')) return '🥂';
     if(g.includes('wine')) return '🍷';
@@ -191,23 +216,15 @@ function renderPantry() {
   }
 
   const order = ['Essentials', 'Spirit', 'Liqueur', 'Wine/Bubbly', 'Mixer/NA'];
-  // Keys to look up in the DICT
-  const catKeys = {
-      'Essentials': 'cat_essentials', 'Spirit': 'cat_spirit', 'Liqueur': 'cat_liqueur', 
-      'Wine/Bubbly': 'cat_wine_bubbly', 'Mixer/NA': 'cat_mixer_na'
-  };
+  const catKeys = { 'Essentials': 'cat_essentials', 'Spirit': 'cat_spirit', 'Liqueur': 'cat_liqueur', 'Wine/Bubbly': 'cat_wine_bubbly', 'Mixer/NA': 'cat_mixer_na' };
 
   pantryBox.innerHTML = order.map(g => {
     const list = groups[g];
     if(!list || list.length === 0) return '';
-    
-    // TRANSLATE HEADER
     const title = t(catKeys[g], 'ui'); 
-    
     return `<div class="pantry-group"><strong>${title}</strong><div class="pantry-grid">` +
       [...new Set(list)].sort().map(name => {
          const isChecked = selected.has(name) ? 'checked' : '';
-         // TRANSLATE INGREDIENT
          return `<label class="pantry-item"><input type="checkbox" value="${name}" ${isChecked}> ${t(name, 'ing')}</label>`;
       }).join('') + `</div></div>`;
   }).join('');
@@ -223,9 +240,6 @@ function renderPantry() {
 function render() {
   const qv = q.value.trim().toLowerCase();
   const bv = base.value;
-  
-  scaleLabel.textContent = scaleMode.value === 'servings' ? t('servings') : t('target_ml');
-  q.placeholder = t('search_ph');
   clearSearchBtn.hidden = qv === "";
 
   const isDefaultFilters = qv === "" && bv === "All" && selected.size === 0;
@@ -238,7 +252,6 @@ function render() {
       return;
   }
 
-  // Active Filter Logic
   const activeFilters = new Set();
   selected.forEach(s => { if (!ESSENTIALS.includes(s)) activeFilters.add(s); });
 
@@ -257,7 +270,6 @@ function render() {
   if(list.length === 0) {
       results.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--muted);">
         <h3>No matches found</h3>
-        <p>Try clearing filters or adding more ingredients.</p>
       </div>`;
       return;
   }
@@ -366,7 +378,13 @@ base.addEventListener('change', () => { q.value = ""; populateDatalist(); render
 units.addEventListener('change', render);
 scaleMode.addEventListener('change', render);
 scaleValue.addEventListener('input', render);
-langSelect.addEventListener('change', () => { CURRENT_LANG = langSelect.value; renderPantry(); render(); renderBarBack(); });
+langSelect.addEventListener('change', () => { 
+    CURRENT_LANG = langSelect.value; 
+    updateStaticLabels(); // NEW: Update the HTML labels instantly
+    renderPantry(); 
+    render(); 
+    renderBarBack(); 
+});
 includeGarnish.addEventListener('change', renderBarBack);
 roundBottles.addEventListener('change', renderBarBack);
 clearPantryBtn.addEventListener('click', () => { selected.clear(); $$('#pantry input[type="checkbox"]').forEach(box => box.checked = false); render(); });
