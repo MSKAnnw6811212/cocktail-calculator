@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (v4.0 - Fixes) */
+/* app.js - Pixel & Pour Cocktail Calculator (v5.0 - Relaxed Mode) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -33,8 +33,14 @@ let CURRENT_LANG = 'en';
 
 // -- Essentials (Always show these in Pantry) --
 const ESSENTIALS = [
-    "Eiswürfel", "Crushed Ice", "Zucker", "Salz", "Pfeffer", 
-    "Limette", "Zitrone", "Orange", "Minze", "Oliven", "Kirsche"
+    "Eiswürfel", "Zucker", "Salz", "Limette", "Zitrone", "Orange", "Minze", "Oliven"
+];
+
+// -- Items to HIDE from Pantry (Too specific, we rely on Generics) --
+const HIDDEN_SPECIFICS = [
+    "Bourbon Whiskey", "Rye Whiskey", "Canadian Whisky", "Scotch Whisky",
+    "Weißer Rum", "Dunkler Rum", "Brauner Rum", "Aged Rum",
+    "Vermouth Rosso", "Vermouth Dry", "Triple Sec", "Cointreau"
 ];
 
 // -- Dictionary --
@@ -47,7 +53,9 @@ const DICT = {
             welcome_head: "Welcome to Pixel & Pour",
             welcome_text: "Select a Base Spirit, Search for a drink, or filter by your Pantry ingredients to get started.",
             qty_count: "Count / As needed",
-            cat_essentials: "Essentials (Ice, Fruit, etc.)"
+            cat_essentials: "Essentials",
+            missing: "Missing:",
+            makeable: "You have everything!"
         },
         de: { 
             servings: "Portionen", target_ml: "Zielmenge (ml)", 
@@ -56,7 +64,9 @@ const DICT = {
             welcome_head: "Willkommen bei Pixel & Pour",
             welcome_text: "Wähle eine Basis, suche einen Drink oder filtere nach deinen Zutaten.",
             qty_count: "Stück / Nach Bedarf",
-            cat_essentials: "Basics (Eis, Obst, etc.)"
+            cat_essentials: "Basics",
+            missing: "Fehlt:",
+            makeable: "Alles da!"
         }
     },
     ing: {
@@ -73,7 +83,7 @@ const DICT = {
         "Pfirsichpüree": "Peach Puree", "Aperol": "Aperol", "Prosecco": "Prosecco",
         "Cachaça": "Cachaça", "Grapefruit Soda": "Grapefruit Soda", "Eiswürfel": "Ice Cubes",
         "Crushed Ice": "Crushed Ice", "Zucker": "Sugar", "Oliven": "Olives", "Kirsche": "Cherry",
-        "Orange": "Orange"
+        "Orange": "Orange", "Rum (any)": "Rum (Any)", "Whiskey (any)": "Whiskey (Any)"
     }
 };
 
@@ -130,7 +140,7 @@ function getGlassIcon(glassType) {
 
 function typeOf(name) {
   const n = name.toLowerCase();
-  if(ESSENTIALS.includes(name)) return 'Essentials'; // FORCE ESSENTIALS
+  if(ESSENTIALS.includes(name)) return 'Essentials';
   if (/gin|wodka|vodka|rum|whisk|bourbon|rye|tequila|cognac|brandy|cachaça/.test(n)) return 'Spirit';
   if (/vermouth|wermut|sherry|porto|aperitif|campari|amaro|liqueur|likör|sec|cointreau|kahlua/.test(n)) return 'Liqueur';
   if (/wine|wein|champagner|sekt|prosecco/.test(n)) return 'Wine/Bubbly';
@@ -161,9 +171,9 @@ function matchesSelection(ingName) {
   return false;
 }
 
-function makeable(r) {
-  if (selected.size === 0) return true;
-  return r.ingredients.every(i => i.optional || matchesSelection(i.name));
+function getMissingIngredients(r) {
+    if (selected.size === 0) return []; // If pantry unused, nothing is missing
+    return r.ingredients.filter(i => !i.optional && !matchesSelection(i.name));
 }
 
 // -- Rendering --
@@ -179,23 +189,24 @@ function populateDatalist() {
 function renderPantry() {
   // 1. Get recipes ingredients
   const recipeIngredients = new Set(RECIPES.flatMap(r => r.ingredients.map(i => i.name)));
-  // 2. Add Essentials
   ESSENTIALS.forEach(e => recipeIngredients.add(e));
   
   const allIngredients = Array.from(recipeIngredients).sort();
   const groups = { Essentials:[], Spirit: [], Liqueur: [], 'Wine/Bubbly': [], 'Mixer/NA': [] };
   
   for (const ing of allIngredients) {
+    // Hide Specifics to clean up list (User uses "Rum (any)" instead)
+    if (HIDDEN_SPECIFICS.includes(ing)) continue;
+
     const type = typeOf(ing);
     if(groups[type]) groups[type].push(ing); else groups['Mixer/NA'].push(ing);
   }
-  // Generics
+  // Add Generics explicitly
   for (const label of Object.keys(GENERICS)) {
       const type = typeOf(label);
       if(groups[type]) groups[type].push(label);
   }
 
-  // Force specific order
   const order = ['Essentials', 'Spirit', 'Liqueur', 'Wine/Bubbly', 'Mixer/NA'];
 
   pantryBox.innerHTML = order.map(g => {
@@ -237,21 +248,34 @@ function render() {
       return;
   }
 
+  // Filter ONLY by Search/Base (Ignore Pantry Strictness)
   let list = RECIPES.filter(r => 
     (bv === 'All' || (r.base && r.base.includes(bv))) &&
-    (qv === '' || r.name.toLowerCase().includes(qv)) &&
-    makeable(r)
+    (qv === '' || r.name.toLowerCase().includes(qv))
   );
+
+  // Sort: Makeable First
+  list.sort((a, b) => {
+      const missingA = getMissingIngredients(a).length;
+      const missingB = getMissingIngredients(b).length;
+      return missingA - missingB;
+  });
 
   if(list.length === 0) {
       results.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--muted);">
         <h3>No matches found</h3>
-        <p>Try adding more ingredients to your pantry or clearing the filters.</p>
       </div>`;
       return;
   }
 
   results.innerHTML = list.map(r => {
+    const missing = getMissingIngredients(r);
+    const isMakeable = missing.length === 0;
+    // Badge Logic
+    const statusBadge = isMakeable && selected.size > 0
+        ? `<div class="status-bar ok">✅ ${t('makeable')}</div>` 
+        : (selected.size > 0 ? `<div class="status-bar missing">${t('missing')} ${missing.length} item(s)</div>` : '');
+
     const ings = r.ingredients.map(i => {
       const ml = scaledMl(i.qtyMl || 0);
       const [v, u] = convertQty(ml);
@@ -261,15 +285,16 @@ function render() {
       const qtyDisplay = i.qtyMl ? `<span class="qty">${v} ${u}</span>` : '—';
       
       const isMissing = selected.size > 0 && !i.optional && !matchesSelection(i.name);
-      const style = isMissing ? 'color:var(--fail); font-weight:bold;' : '';
-      const missingIcon = isMissing ? ' ⚠️' : '';
+      const style = isMissing ? 'color:var(--fail); font-weight:700;' : '';
+      const missingIcon = isMissing ? ' 🛒' : '';
       return `<div style="${style}">${qtyDisplay} ${name}${label}${top}${missingIcon}</div>`;
     }).join('');
 
     const icon = getGlassIcon(r.glass);
 
-    return `<article class="recipe">
-      <div style="display:flex;justify-content:space-between;align-items:start;">
+    return `<article class="recipe ${isMakeable ? '' : 'faded'}">
+      ${statusBadge}
+      <div style="display:flex;justify-content:space-between;align-items:start; padding-top:10px;">
         <h3 style="margin:0;">${icon} ${r.name}</h3>
       </div>
       <div class="meta">${t('method')}: ${r.method} • ${t('glass')}: ${r.glass}</div>
@@ -309,20 +334,17 @@ function renderBarBack() {
   for (const { recipe, servings } of barBack.values()) {
     for (const ing of recipe.ingredients) {
       if (ing.optional && !includeGarnish.checked) continue;
-      // FIX: INCLUDE 0ml ITEMS (like Limes/Sugar)
       const totalMl = (ing.qtyMl || 0) * servings;
-      // Store object with ml AND count logic
       if(!totals.has(ing.name)) totals.set(ing.name, { ml:0, count:0 });
       const rec = totals.get(ing.name);
       rec.ml += totalMl;
-      rec.count += servings; // Rough count of how many drinks need this
+      rec.count += servings;
     }
   }
 
   bbTable.innerHTML = "";
   Array.from(totals.entries()).sort().forEach(([name, data]) => {
     let mlDisplay = "";
-    // Display Logic
     if (data.ml > 0) {
         if (roundBottles.checked) {
             const btls = Math.ceil(data.ml / 750);
@@ -331,10 +353,8 @@ function renderBarBack() {
             mlDisplay = `${Math.round(data.ml)} ml`;
         }
     } else {
-        // For non-liquid items (Limes, Sugar, etc.)
         mlDisplay = `<span style="color:var(--muted);">${t('qty_count')}</span>`;
     }
-
     const cl = data.ml > 0 ? (data.ml / 10).toFixed(1) + ' cl' : '—';
     const oz = data.ml > 0 ? (data.ml / 29.57).toFixed(1) + ' oz' : '—';
     const tr = document.createElement('tr');
@@ -355,11 +375,9 @@ roundBottles.addEventListener('change', renderBarBack);
 clearPantryBtn.addEventListener('click', () => { selected.clear(); $$('#pantry input[type="checkbox"]').forEach(box => box.checked = false); render(); });
 clearSearchBtn.addEventListener('click', () => { q.value = ""; q.focus(); render(); });
 
-// -- Print Logic (Preview First) --
+// -- Print --
 if(printBtn) printBtn.addEventListener('click', () => {
-    // Scroll to BarBack
     document.getElementById('barback').scrollIntoView({behavior: 'smooth'});
-    // Slight delay to allow scroll, then print
     setTimeout(() => window.print(), 500);
 });
 
