@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (v14.0 - Total Translation Fix) */
+/* app.js - Pixel & Pour Cocktail Calculator (v15.0 - Logic Flip Fix) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -31,18 +31,17 @@ const selected = new Set();
 const barBack = new Map();
 let CURRENT_LANG = 'en';
 
-const ESSENTIALS = ["Eiswürfel", "Zucker", "Salz", "Limette", "Zitrone", "Orange", "Minze", "Oliven", "Kirsche"];
+const ESSENTIALS = ["Ice Cubes", "Sugar", "Salt", "Lime", "Lemon", "Orange", "Mint", "Olives", "Cherry"];
 const HIDDEN_SPECIFICS = [
     "Bourbon Whiskey", "Rye Whiskey", "Canadian Whisky", "Scotch Whisky",
-    "Weißer Rum", "Dunkler Rum", "Brauner Rum", "Aged Rum",
+    "White Rum", "Dark Rum", "Aged Rum", 
     "Vermouth Rosso", "Vermouth Dry", "Triple Sec", "Cointreau"
 ];
 
-// -- THE DICTIONARY --
+// -- THE DICTIONARY (English Source -> German Target) --
 const DICT = {
     ui: {
         en: { 
-            // Static UI Labels (Top Controls)
             lbl_lang: "Language", lbl_search: "Find Recipe", lbl_base: "Base Spirit", lbl_units: "Units",
             lbl_pantry_head: "Pantry — Filter by what you have", lbl_pantry_sub: "Select ingredients to see what you can make.",
             lbl_scale: "Scale by", lbl_shop_head: "Shopping List", lbl_shop_sub: "Add recipes above to see total ingredients needed here.",
@@ -50,27 +49,20 @@ const DICT = {
             btn_clear: "❌ Clear Selection", btn_print: "Print",
             opt_all: "All", opt_servings: "Servings", opt_target: "Target ml (Total)",
             th_ing: "Ingredient", th_qty: "Total Qty",
-
-            // Dynamic UI Labels (Recipe Cards)
+            
             lbl_method: "Method", lbl_glass: "Glass", 
             lbl_missing: "Missing:", lbl_makeable: "You have everything!",
-            lbl_item_s: "item(s)", 
-            btn_add_sheet: "+ Shopping List",
-
-            // Dynamic Text
+            lbl_item_s: "item(s)", btn_add_sheet: "+ Shopping List",
+            
             search_ph: "Type to search or browse...", 
             welcome_head: "Welcome to Pixel & Pour",
             welcome_text: "Select a Base Spirit, Search for a drink, or filter by your Pantry ingredients to get started.",
             qty_count: "Count / As needed", 
             
-            // Pantry Categories
             cat_essentials: "Essentials", cat_spirit: "Spirits", cat_liqueur: "Liqueurs", cat_wine_bubbly: "Wine & Bubbly", cat_mixer_na: "Mixers / Other",
-            
-            // Scale Labels
             servings_label: "Servings", target_label: "Target ml"
         },
         de: { 
-            // Static UI Labels
             lbl_lang: "Sprache", lbl_search: "Rezept suchen", lbl_base: "Basis-Spirituose", lbl_units: "Einheit",
             lbl_pantry_head: "Vorratsschrank — Was hast du da?", lbl_pantry_sub: "Wähle Zutaten, um passende Drinks zu finden.",
             lbl_scale: "Skalieren", lbl_shop_head: "Einkaufsliste", lbl_shop_sub: "Füge oben Rezepte hinzu, um hier die Summen zu sehen.",
@@ -79,52 +71,49 @@ const DICT = {
             opt_all: "Alle", opt_servings: "Portionen", opt_target: "Zielmenge (ml)",
             th_ing: "Zutat", th_qty: "Menge",
 
-            // Dynamic UI Labels
             lbl_method: "Zubereitung", lbl_glass: "Glas", 
             lbl_missing: "Fehlt:", lbl_makeable: "Alles da!",
-            lbl_item_s: "Zutat(en)", 
-            btn_add_sheet: "+ Einkaufsliste",
+            lbl_item_s: "Zutat(en)", btn_add_sheet: "+ Einkaufsliste",
 
-            // Dynamic Text
             search_ph: "Tippen zum Suchen...", 
             welcome_head: "Willkommen bei Pixel & Pour",
             welcome_text: "Wähle eine Basis, suche einen Drink oder filtere nach deinen Zutaten.",
             qty_count: "Stück / Nach Bedarf", 
             
-            // Pantry Categories
             cat_essentials: "Basics", cat_spirit: "Spirituosen", cat_liqueur: "Liköre", cat_wine_bubbly: "Wein & Sekt", cat_mixer_na: "Mixer / Sonstiges",
-            
-            // Scale Labels
             servings_label: "Portionen", target_label: "Zielmenge"
         }
     },
     ing: {
-        // --- 1. Methods & Glasses ---
+        // Mapping: English Data -> German Translation
+        // Methods & Glass
         "Stir": "Rühren", "Shake": "Schütteln", "Build": "Bauen", "Muddle": "Zerstoßen", 
         "Shake + top": "Schütteln + Auffüllen", "Blend/Shake": "Mixen/Schütteln", "Roll/Stir": "Rollen/Rühren", "Blend": "Mixen",
         "Tumbler": "Tumbler", "Martini": "Martini-Glas", "Coupe": "Schale", "Highball": "Highball-Glas",
         "Longdrink": "Longdrink-Glas", "Mule Mug": "Kupferbecher", "Wine Glass": "Weinglas", "Flute": "Sektflöte", "Julep Cup": "Julep-Becher",
         "Großes Glas": "Großes Glas", "Glas": "Glas",
 
-        // --- 2. Ingredients ---
-        "Eiswürfel": "Ice Cubes", "Crushed Ice": "Crushed Ice", "Zucker": "Sugar", "Salz": "Salt", "Pfeffer": "Pepper",
-        "Limette": "Lime", "Zitrone": "Lemon", "Orange": "Orange", "Minze": "Mint", "Oliven": "Olives", "Kirsche": "Cherry", "Erdbeeren": "Strawberries", "Vanilleeis": "Vanilla Ice Cream",
+        // Essentials
+        "Ice Cubes": "Eiswürfel", "Crushed Ice": "Crushed Ice", "Sugar": "Zucker", "Salt": "Salz", "Pepper": "Pfeffer",
+        "Lime": "Limette", "Lemon": "Zitrone", "Orange": "Orange", "Mint": "Minze", "Olives": "Oliven", "Cherry": "Kirsche", "Strawberries": "Erdbeeren", "Vanilla Ice Cream": "Vanilleeis",
+
+        // Ingredients
         "Gin": "Gin", "Rum (any)": "Rum (Alle)", "Whiskey (any)": "Whiskey (Alle)", "Vodka": "Vodka", "Tequila": "Tequila",
         "Cachaça": "Cachaça", "Cognac": "Cognac", "Brandy": "Brandy",
-        "Kaffeelikör": "Coffee Liqueur", "Campari": "Campari", "Aperol": "Aperol", "Amaretto": "Amaretto",
-        "Maraschino": "Maraschino", "Cream Liqueur": "Cream Liqueur",
-        "Prosecco": "Prosecco", "Champagner": "Champagne", "Rotwein": "Red Wine", "Weißwein": "White Wine", 
-        "Wermut": "Vermouth", "Sherry": "Sherry", "Portwein": "Port",
-        "Zitronensaft": "Lemon Juice", "Limettensaft": "Lime Juice", "Orangensaft": "Orange Juice",
-        "Ananassaft": "Pineapple Juice", "Cranberrysaft": "Cranberry Juice", "Tomatensaft": "Tomato Juice",
-        "Grapefruit Soda": "Grapefruit Soda", "Cola": "Cola", "Sodawasser": "Soda Water", "Tonic Water": "Tonic Water",
-        "Ingwerbier": "Ginger Beer", "Ginger Ale": "Ginger Ale",
-        "Zuckersirup": "Sugar Syrup", "Mandelsirup": "Orgeat", "Grenadine": "Grenadine", "Honigsirup": "Honey Syrup",
-        "Sahne": "Cream", "Milch": "Milk", "Kokosnusscreme": "Coconut Cream",
-        "Eiweiß": "Egg White", "Worcestershiresauce": "Worcestershire Sauce", "Angostura Bitters": "Angostura Bitters",
-        "Pfirsichpüree": "Peach Puree",
+        "Coffee Liqueur": "Kaffeelikör", "Campari": "Campari", "Aperol": "Aperol", "Amaretto": "Amaretto",
+        "Maraschino": "Maraschino", "Cream Liqueur": "Sahnelikör", "Triple Sec": "Triple Sec",
+        "Prosecco": "Prosecco", "Champagne": "Champagner", "Red Wine": "Rotwein", "White Wine": "Weißwein", 
+        "Vermouth": "Wermut", "Vermouth Dry": "Wermut Trocken", "Vermouth Rosso": "Wermut Rot", "Sherry": "Sherry", "Port": "Portwein",
+        "Lemon Juice": "Zitronensaft", "Lime Juice": "Limettensaft", "Orange Juice": "Orangensaft",
+        "Pineapple Juice": "Ananassaft", "Cranberry Juice": "Cranberrysaft", "Tomato Juice": "Tomatensaft",
+        "Grapefruit Soda": "Grapefruit Soda", "Cola": "Cola", "Soda Water": "Sodawasser", "Tonic Water": "Tonic Water",
+        "Ginger Beer": "Ingwerbier", "Ginger Ale": "Ginger Ale",
+        "Sugar Syrup": "Zuckersirup", "Orgeat": "Mandelsirup", "Grenadine": "Grenadine", "Honey Syrup": "Honigsirup",
+        "Cream": "Sahne", "Milk": "Milch", "Coconut Cream": "Kokosnusscreme",
+        "Egg White": "Eiweiß", "Worcestershire Sauce": "Worcestershiresauce", "Angostura Bitters": "Angostura Bitters",
+        "Peach Puree": "Pfirsichpüree",
 
-        // --- 3. Instructions (Refined) ---
+        // Instructions
         "Stir ingredients with ice. Strain over fresh ice. Garnish with orange.": "Auf Eis rühren. Auf frisches Eis abseihen. Mit Orange garnieren.",
         "Stir with ice. Strain into chilled glass. Garnish with olive.": "Auf Eis rühren. In gekühltes Glas abseihen. Mit Olive garnieren.",
         "Shake with ice. Fine strain.": "Mit Eis schütteln. Fein abseihen.",
@@ -149,9 +138,33 @@ const DICT = {
         "Muddle mint. Add ice/bourbon. Stir until frosted.": "Minze andrücken. Eis/Bourbon dazu. Rühren bis das Glas beschlägt.",
         "Build. Sink grenadine.": "Bauen. Grenadine am Rand hineinsinken lassen.",
         "Shake all spirits/sour. Strain. Top with Cola.": "Spirituosen & Sours schütteln. Abseihen. Mit Cola toppen.",
-        "Im Becher über Eis bauen; Limette.": "Build in mug over ice. Add lime.",
-        "Alles im Mixer pürieren; hohes Glas.": "Blend everything. Pour into tall glass.",
-        "Im Glas bauen; umrühren.": "Build in glass. Stir."
+        "Build in glass over ice. Garnish with lime wedge.": "Im Glas auf Eis bauen. Mit Limettenschnitz garnieren.",
+        "Stir with ice until very cold. Strain into chilled glass. Garnish with lemon twist or olive.": "Kalt rühren. In gekühltes Glas abseihen. Mit Zitrone/Olive garnieren.",
+        "Dry shake (no ice) first, then shake with ice. Strain over fresh ice.": "Erst ohne Eis schütteln (Dry Shake), dann mit Eis. Abseihen.",
+        "Shake hard with ice to create foam. Strain into chilled glass.": "Kräftig auf Eis schütteln (für Schaum). In gekühltes Glas abseihen.",
+        "Build in glass over ice. Stir gently. Garnish with orange slice.": "Im Glas auf Eis bauen. Sanft rühren. Mit Orange garnieren.",
+        "Stir with ice. Strain into chilled glass. Garnish with cherry.": "Auf Eis rühren. In gekühltes Glas abseihen. Mit Kirsche garnieren.",
+        "Muddle mint gently. Add ingredients and ice. Top with soda.": "Minze sanft andrücken. Zutaten & Eis dazu. Mit Soda toppen.",
+        "Build in mug over ice. Top with Ginger Beer.": "Im Becher auf Eis bauen. Mit Ginger Beer auffüllen.",
+        "Fill glass with ice. Add Prosecco, then Aperol, then Soda.": "Glas mit Eis füllen. Prosecco, dann Aperol, dann Soda.",
+        "Stir gently with ice. Garnish with celery stick.": "Sanft auf Eis rühren. Mit Selleriestange garnieren.",
+        "Shake with ice. Strain into chilled glass.": "Auf Eis schütteln. In gekühltes Glas abseihen.",
+        "Shake (except soda). Strain onto ice. Top with soda.": "Schütteln (außer Soda). Auf Eis abseihen. Mit Soda toppen.",
+        "Shake hard. Pour unstrained into glass.": "Kräftig schütteln. Ungeseiht ins Glas gießen.",
+        "Shake hard or blend with crushed ice.": "Kräftig schütteln oder blenden.",
+        "Build in glass over ice. Garnish with lime wedge.": "Im Glas auf Eis bauen. Mit Limette garnieren.",
+        "Muddle lime chunks and sugar. Add ice and Cachaça. Stir.": "Limette & Zucker zerstoßen. Eis & Cachaça dazu. Rühren.",
+        "Shake (no soda). Strain into glass (no ice). Top with soda.": "Schütteln (ohne Soda). Ins Glas (ohne Eis) abseihen. Mit Soda toppen.",
+        "Build vodka and liqueur over ice. Float cream on top.": "Wodka & Likör auf Eis bauen. Sahne darüberschichten.",
+        "Pour puree into glass. Top gently with Prosecco.": "Püree ins Glas. Vorsichtig mit Prosecco auffüllen.",
+        "Shake first 3 ingredients. Strain into flute. Top with Champagne.": "Erste 3 Zutaten schütteln. In Flöte abseihen. Mit Champagner toppen.",
+        "Shake with ice. Strain into chilled glass.": "Auf Eis schütteln. In gekühltes Glas abseihen.",
+        "Build in glass with ice. Stir.": "Im Glas auf Eis bauen. Rühren.",
+        "Muddle mint gently. Fill cup with crushed ice. Add bourbon. Stir until cup frosts.": "Minze sanft andrücken. Becher mit Crushed Ice füllen. Bourbon dazu. Rühren bis beschlagen.",
+        "Build tequila and juice. Sink grenadine to bottom.": "Tequila & Saft bauen. Grenadine hineinsinken lassen.",
+        "Shake all spirits/sour. Strain into ice-filled glass. Top with Cola.": "Alles (außer Cola) schütteln. Auf Eis abseihen. Mit Cola toppen.",
+        "Build in glass over ice.": "Im Glas auf Eis bauen.",
+        "Build over ice. Garnish with cherry.": "Auf Eis bauen. Mit Kirsche garnieren."
     }
 };
 
@@ -176,12 +189,21 @@ async function initData() {
 }
 
 function t(key, type='ui') {
-    if (CURRENT_LANG === 'de') return DICT[type].de[key] || key;
+    // 1. INGREDIENTS/DATA TRANSLATION
     if (type === 'ing') {
-        if (CURRENT_LANG === 'en') return DICT.ing[key] || key;
+        if (CURRENT_LANG === 'de') {
+            // Translate English Key -> German Value
+            return DICT.ing[key] || key; 
+        }
+        // If English, return the key as-is (Source is English)
         return key; 
     }
-    return DICT.ui.en[key] || key; 
+
+    // 2. UI LABELS
+    if (DICT.ui[CURRENT_LANG] && DICT.ui[CURRENT_LANG][key]) {
+        return DICT.ui[CURRENT_LANG][key];
+    }
+    return DICT.ui.en[key] || key;
 }
 
 function updateStaticLabels() {
@@ -206,7 +228,7 @@ function getGlassIcon(glassType) {
 
 function typeOf(name) {
   const n = name.toLowerCase();
-  if(ESSENTIALS.includes(name)) return 'Essentials';
+  if(ESSENTIALS.map(e=>e.toLowerCase()).includes(n)) return 'Essentials';
   if (/gin|wodka|vodka|rum|whisk|bourbon|rye|tequila|cognac|brandy|cachaça/.test(n)) return 'Spirit';
   if (/vermouth|wermut|sherry|porto|aperitif|campari|amaro|liqueur|likör|sec|cointreau|kahlua/.test(n)) return 'Liqueur';
   if (/wine|wein|champagner|sekt|prosecco/.test(n)) return 'Wine/Bubbly';
@@ -263,7 +285,6 @@ function renderPantry() {
   }
 
   const order = ['Essentials', 'Spirit', 'Liqueur', 'Wine/Bubbly', 'Mixer/NA'];
-  // Correctly mapping internal keys to UI dictionary keys
   const catKeys = { 'Essentials': 'cat_essentials', 'Spirit': 'cat_spirit', 'Liqueur': 'cat_liqueur', 'Wine/Bubbly': 'cat_wine_bubbly', 'Mixer/NA': 'cat_mixer_na' };
 
   pantryBox.innerHTML = order.map(g => {
@@ -327,10 +348,9 @@ function render() {
     const missing = getMissingIngredients(r);
     const isMakeable = missing.length === 0;
     
-    // UPDATED: Using dynamic 'lbl_missing' and 'lbl_makeable' from dictionary
     const statusBadge = isMakeable && selected.size > 0
-        ? `<div class="status-bar ok">✅ ${t('lbl_makeable')}</div>` 
-        : (selected.size > 0 ? `<div class="status-bar missing">${t('lbl_missing')} ${missing.length} ${t('lbl_item_s')}</div>` : '');
+        ? `<div class="status-bar ok">✅ ${t('makeable')}</div>` 
+        : (selected.size > 0 ? `<div class="status-bar missing">${t('missing')} ${missing.length} ${t('item_s')}</div>` : '');
 
     const ings = r.ingredients.map(i => {
       const ml = scaledMl(i.qtyMl || 0);
@@ -352,7 +372,6 @@ function render() {
 
     const icon = getGlassIcon(r.glass);
 
-    // UPDATED: Using 'lbl_method', 'lbl_glass', and 'btn_add_sheet' from dictionary
     return `<article class="recipe ${isMakeable ? '' : 'faded'}">
       ${statusBadge}
       <div style="display:flex;justify-content:space-between;align-items:start; padding-top:10px;">
