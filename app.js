@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (v6.0 - Polished) */
+/* app.js - Pixel & Pour Cocktail Calculator (v7.0 - Smart Filter) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -31,19 +31,13 @@ const selected = new Set();
 const barBack = new Map();
 let CURRENT_LANG = 'en';
 
-// -- Essentials (Always show in Pantry) --
-const ESSENTIALS = [
-    "Eiswürfel", "Zucker", "Salz", "Limette", "Zitrone", "Orange", "Minze", "Oliven"
-];
-
-// -- Items to HIDE from Pantry --
+const ESSENTIALS = ["Eiswürfel", "Zucker", "Salz", "Limette", "Zitrone", "Orange", "Minze", "Oliven"];
 const HIDDEN_SPECIFICS = [
     "Bourbon Whiskey", "Rye Whiskey", "Canadian Whisky", "Scotch Whisky",
     "Weißer Rum", "Dunkler Rum", "Brauner Rum", "Aged Rum",
     "Vermouth Rosso", "Vermouth Dry", "Triple Sec", "Cointreau"
 ];
 
-// -- Dictionary --
 const DICT = {
     ui: {
         en: { 
@@ -52,10 +46,8 @@ const DICT = {
             add_sheet: "+ Shopping List", glass: "Glass", method: "Method", ingredients: "Ingredients",
             welcome_head: "Welcome to Pixel & Pour",
             welcome_text: "Select a Base Spirit, Search for a drink, or filter by your Pantry ingredients to get started.",
-            qty_count: "Count / As needed",
-            cat_essentials: "Essentials",
-            missing: "Missing:",
-            makeable: "You have everything!"
+            qty_count: "Count / As needed", cat_essentials: "Essentials",
+            missing: "Missing:", makeable: "You have everything!"
         },
         de: { 
             servings: "Portionen", target_ml: "Zielmenge (ml)", 
@@ -63,10 +55,8 @@ const DICT = {
             add_sheet: "+ Einkaufsliste", glass: "Glas", method: "Methode", ingredients: "Zutaten",
             welcome_head: "Willkommen bei Pixel & Pour",
             welcome_text: "Wähle eine Basis, suche einen Drink oder filtere nach deinen Zutaten.",
-            qty_count: "Stück / Nach Bedarf",
-            cat_essentials: "Basics",
-            missing: "Fehlt:",
-            makeable: "Alles da!"
+            qty_count: "Stück / Nach Bedarf", cat_essentials: "Basics",
+            missing: "Fehlt:", makeable: "Alles da!"
         }
     },
     ing: {
@@ -87,7 +77,6 @@ const DICT = {
     }
 };
 
-// -- Theme Init --
 const savedTheme = localStorage.getItem('pp_theme');
 if(savedTheme === 'dark') document.body.classList.add('dark');
 themeToggle.addEventListener('click', () => {
@@ -95,32 +84,17 @@ themeToggle.addEventListener('click', () => {
   localStorage.setItem('pp_theme', document.body.classList.contains('dark') ? 'dark' : 'light');
 });
 
-// -- 1. Data Loading --
 async function initData() {
   try {
-    const [rRes, sRes] = await Promise.all([
-      fetch('./data/cocktails.json'),
-      fetch('./data/substitutions.json')
-    ]);
-    if(!rRes.ok || !sRes.ok) throw new Error("Failed to load data files");
+    const [rRes, sRes] = await Promise.all([ fetch('./data/cocktails.json'), fetch('./data/substitutions.json') ]);
+    if(!rRes.ok || !sRes.ok) throw new Error("Failed");
     const rData = await rRes.json();
     const sData = await sRes.json();
-
-    RECIPES = rData.recipes;
-    SUBS = sData.substitutions;
-    GENERICS = sData.generic_families;
-
-    populateDatalist();
-    renderPantry();
-    render();
-    renderBarBack();
-  } catch (err) {
-    console.error(err);
-    results.innerHTML = `<div class="card" style="color:var(--fail); padding:20px;">Error Loading Data. Check console.</div>`;
-  }
+    RECIPES = rData.recipes; SUBS = sData.substitutions; GENERICS = sData.generic_families;
+    populateDatalist(); renderPantry(); render(); renderBarBack();
+  } catch (err) { results.innerHTML = `<div class="card" style="color:var(--fail); padding:20px;">Error Loading Data.</div>`; }
 }
 
-// -- Helpers --
 function t(key, type='ui') {
     if (CURRENT_LANG === 'de') return DICT[type].de[key] || key;
     if (type === 'ing') return DICT.ing[key] || key; 
@@ -130,8 +104,8 @@ function t(key, type='ui') {
 function getGlassIcon(glassType) {
     const g = (glassType || "").toLowerCase();
     if(g.includes('martini') || g.includes('coupe')) return '🍸';
-    if(g.includes('tumbler') || g.includes('rocks') || g.includes('fashion')) return '🥃';
-    if(g.includes('long') || g.includes('highball') || g.includes('collins')) return '🥤';
+    if(g.includes('tumbler') || g.includes('rocks')) return '🥃';
+    if(g.includes('long') || g.includes('highball')) return '🥤';
     if(g.includes('mule') || g.includes('mug')) return '🍺';
     if(g.includes('flute') || g.includes('sekt')) return '🥂';
     if(g.includes('wine')) return '🍷';
@@ -155,10 +129,7 @@ function convertQty(qtyMl) {
   return [parseFloat(oz.toFixed(2)), 'oz'];
 }
 
-function scaledMl(ml) {
-  const n = Math.max(0.1, Number(scaleValue.value || 1));
-  return ml * n;
-}
+function scaledMl(ml) { return ml * Math.max(0.1, Number(scaleValue.value || 1)); }
 
 function matchesSelection(ingName) {
   if (selected.has(ingName)) return true;
@@ -172,25 +143,20 @@ function matchesSelection(ingName) {
 }
 
 function getMissingIngredients(r) {
-    if (selected.size === 0) return []; // If pantry unused, nothing is missing
+    if (selected.size === 0) return [];
     return r.ingredients.filter(i => !i.optional && !matchesSelection(i.name));
 }
 
-// -- Rendering --
 function populateDatalist() {
     const bv = base.value;
-    const filteredRecipes = RECIPES.filter(r => 
-        bv === 'All' || (r.base && r.base.includes(bv))
-    );
+    const filteredRecipes = RECIPES.filter(r => bv === 'All' || (r.base && r.base.includes(bv)));
     const opts = filteredRecipes.map(r => `<option value="${r.name}"></option>`).sort();
     recipeList.innerHTML = opts.join('');
 }
 
 function renderPantry() {
-  // 1. Get recipes ingredients
   const recipeIngredients = new Set(RECIPES.flatMap(r => r.ingredients.map(i => i.name)));
   ESSENTIALS.forEach(e => recipeIngredients.add(e));
-  
   const allIngredients = Array.from(recipeIngredients).sort();
   const groups = { Essentials:[], Spirit: [], Liqueur: [], 'Wine/Bubbly': [], 'Mixer/NA': [] };
   
@@ -205,18 +171,15 @@ function renderPantry() {
   }
 
   const order = ['Essentials', 'Spirit', 'Liqueur', 'Wine/Bubbly', 'Mixer/NA'];
-
   pantryBox.innerHTML = order.map(g => {
     const list = groups[g];
     if(!list || list.length === 0) return '';
-    const uniqueList = [...new Set(list)].sort();
     const title = g === 'Essentials' ? t('cat_essentials') : g;
     return `<div class="pantry-group"><strong>${title}</strong><div class="pantry-grid">` +
-      uniqueList.map(name => {
+      [...new Set(list)].sort().map(name => {
          const isChecked = selected.has(name) ? 'checked' : '';
          return `<label class="pantry-item"><input type="checkbox" value="${name}" ${isChecked}> ${t(name, 'ing')}</label>`;
-      }).join('') +
-      `</div></div>`;
+      }).join('') + `</div></div>`;
   }).join('');
   
   pantryBox.addEventListener('change', (e) => {
@@ -245,25 +208,41 @@ function render() {
       return;
   }
 
-  // STRICT Base Filter + Relaxed Pantry Match
+  // --- SMART PANTRY FILTER ---
+  // Identify if any "Spirits" are selected in the pantry.
+  // If yes, we filter the list to require at least one match.
+  const selectedSpirits = new Set();
+  selected.forEach(s => { if(typeOf(s) === 'Spirit') selectedSpirits.add(s); });
+
   let list = RECIPES.filter(r => {
-    // 1. Base Filter (Strict)
     const matchesBase = bv === 'All' || (r.base && r.base.includes(bv));
-    // 2. Search Filter (Strict)
     const matchesSearch = qv === '' || r.name.toLowerCase().includes(qv);
-    return matchesBase && matchesSearch;
+    
+    // Smart Filter: If spirits are selected in pantry, recipe MUST match at least one (via substitutions too)
+    let matchesPantry = true;
+    if (selectedSpirits.size > 0) {
+        // Does this recipe contain any ingredient that matches the selected spirits?
+        matchesPantry = r.ingredients.some(ing => {
+            // Check direct name
+            if (selectedSpirits.has(ing.name)) return true;
+            // Check Subs (e.g. Recipe asks for "Bourbon", you have "Whiskey (any)")
+            const subList = SUBS[ing.name]; 
+            if (subList && subList.some(s => selectedSpirits.has(s))) return true;
+            // Check Reverse Subs (Recipe asks for "Gin", does selected "Gin" match?)
+            // Usually matched via matchesSelection logic, but here we check existence.
+            return matchesSelection(ing.name); 
+        });
+    }
+
+    return matchesBase && matchesSearch && matchesPantry;
   });
 
-  // Sort: Makeable First
-  list.sort((a, b) => {
-      const missingA = getMissingIngredients(a).length;
-      const missingB = getMissingIngredients(b).length;
-      return missingA - missingB;
-  });
+  list.sort((a, b) => getMissingIngredients(a).length - getMissingIngredients(b).length);
 
   if(list.length === 0) {
       results.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--muted);">
         <h3>No matches found</h3>
+        <p>Try clearing filters or adding more ingredients.</p>
       </div>`;
       return;
   }
@@ -272,7 +251,6 @@ function render() {
     const missing = getMissingIngredients(r);
     const isMakeable = missing.length === 0;
     
-    // Header Badge
     const statusBadge = isMakeable && selected.size > 0
         ? `<div class="status-bar ok">✅ ${t('makeable')}</div>` 
         : (selected.size > 0 ? `<div class="status-bar missing">${t('missing')} ${missing.length} item(s)</div>` : '');
@@ -286,19 +264,11 @@ function render() {
       const qtyDisplay = i.qtyMl ? `<span class="qty">${v} ${u}</span>` : '—';
       
       const isMissing = selected.size > 0 && !i.optional && !matchesSelection(i.name);
-      // New: Check if owned (for green highlight)
       const isOwned = selected.size > 0 && (i.optional || matchesSelection(i.name));
 
-      // Style Logic
-      let style = '';
-      let icon = '';
-      if (isMissing) {
-          style = 'color:var(--fail); font-weight:700;';
-          icon = ' 🛒'; // Shopping Cart for missing
-      } else if (isOwned) {
-          style = 'color:var(--ok); font-weight:600;';
-          icon = ' ✔'; // Checkmark for owned
-      }
+      let style = ''; let icon = '';
+      if (isMissing) { style = 'color:var(--fail); font-weight:700;'; icon = ' 🛒'; } 
+      else if (isOwned) { style = 'color:var(--ok); font-weight:600;'; icon = ' ✔'; }
 
       return `<div style="${style}">${qtyDisplay} ${name}${label}${top}${icon}</div>`;
     }).join('');
@@ -376,7 +346,6 @@ function renderBarBack() {
   });
 }
 
-// -- Listeners --
 q.addEventListener('input', render);
 base.addEventListener('change', () => { q.value = ""; populateDatalist(); render(); });
 units.addEventListener('change', render);
@@ -387,8 +356,6 @@ includeGarnish.addEventListener('change', renderBarBack);
 roundBottles.addEventListener('change', renderBarBack);
 clearPantryBtn.addEventListener('click', () => { selected.clear(); $$('#pantry input[type="checkbox"]').forEach(box => box.checked = false); render(); });
 clearSearchBtn.addEventListener('click', () => { q.value = ""; q.focus(); render(); });
-
-// -- Print --
 if(printBtn) printBtn.addEventListener('click', () => {
     document.getElementById('barback').scrollIntoView({behavior: 'smooth'});
     setTimeout(() => window.print(), 500);
