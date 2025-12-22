@@ -233,7 +233,14 @@ const DICT = {
         "Peach Bitters": "Pfirsich-Bitter",
         "Cold Black Tea": "Kalter Schwarztee",
         "Genever": "Genever",
-        "Curacao Orange": "Curaçao Orange"
+        "Curacao Orange": "Curaçao Orange",
+        // --- Batch E Additions ---
+        "Creme de Violette": "Veilchenlikör (Crème de Violette)",
+        "Absinthe": "Absinth",
+        "Dry Orange Curaçao": "Orange Curaçao (Trocken)",
+        "Chocolate Liqueur": "Schokoladenlikör",
+        "Anisette": "Anislikör",
+        "Orange Liqueur": "Orangenlikör"
     }
 };
 
@@ -566,6 +573,7 @@ if(printBtn) printBtn.addEventListener('click', () => {
 });
 
 initData();
+
 
 
 
