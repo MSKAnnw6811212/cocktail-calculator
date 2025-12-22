@@ -1,22 +1,39 @@
 {
   "substitutions": {
-    "Bourbon Whiskey": ["Whiskey (any)", "Rye Whiskey", "Canadian Whisky"],
-    "Rye Whiskey": ["Whiskey (any)", "Bourbon Whiskey"],
-    "Cointreau": ["Triple Sec", "Grand Marnier", "Dry Curaçao"],
-    "Vermouth Rosso": ["Süßer Vermouth", "Sweet Vermouth"],
-    "Vermouth Dry": ["Trockener Vermouth", "Dry Vermouth"],
-    "Sodawasser": ["Sparkling Water", "Mineralwasser"],
-    "Zitronensaft": ["Lemon Juice"],
-    "Limettensaft": ["Lime Juice"]
+    "Bourbon Whiskey": ["Rye Whiskey", "Whiskey (Any)"],
+    "Rye Whiskey": ["Bourbon Whiskey", "Whiskey (Any)"],
+    "Scotch Whisky": ["Whiskey (Any)"],
+    "Whiskey (Any)": ["Bourbon Whiskey", "Rye Whiskey", "Scotch Whisky"],
+    
+    "White Rum": ["Rum (Any)"],
+    "Dark Rum": ["Aged Rum", "Rum (Any)"],
+    "Aged Rum": ["Dark Rum", "Rum (Any)"],
+    "Rum (Any)": ["White Rum", "Dark Rum", "Aged Rum"],
+    
+    "Dry Vermouth": ["Vermouth"],
+    "Sweet Vermouth": ["Vermouth"],
+    
+    "Cognac": ["Brandy"],
+    "Brandy": ["Cognac"],
+    
+    "Lemon Juice": ["Lime Juice"],
+    "Lime Juice": ["Lemon Juice"],
+    
+    "Sugar Syrup": ["Honey Syrup", "Agave Syrup"],
+    "Honey Syrup": ["Sugar Syrup", "Agave Syrup"],
+    
+    "Soda Water": ["Sparkling Mineral Water"],
+    "Prosecco": ["Sparkling Wine", "Champagne"],
+    "Champagne": ["Sparkling Wine", "Prosecco"],
+    "Sparkling Wine": ["Prosecco", "Champagne"]
   },
   "generic_families": {
-    "Whiskey (any)": "(whisk|whisky|bourbon|rye|scotch)",
-    "Rum (any)": "\\brum\\b|weisser rum|brauner rum|dark rum",
-    "Gin": "\\bgin\\b",
-    "Vodka": "\\bwodka\\b|\\bvodka\\b",
-    "Tequila": "\\btequila\\b",
-    "Vermouth": "vermouth|wermut",
-    "Triple Sec": "triple sec|cointreau|cura[cç]ao",
-    "Milk/Cream": "milch|milk|sahne|cream|rahm"
+    "Rum (Any)": "Rum",
+    "Whiskey (Any)": "Whisk",
+    "Gin": "Gin",
+    "Vodka": "Vodka",
+    "Tequila": "Tequila",
+    "Brandy": "Brandy|Cognac",
+    "Vermouth": "Vermouth|Wermut"
   }
 }
