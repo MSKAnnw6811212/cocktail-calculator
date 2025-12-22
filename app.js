@@ -208,7 +208,24 @@ const DICT = {
         "Grand Marnier": "Grand Marnier",
         "Blue Curaçao": "Blue Curaçao",
         "Fino Sherry": "Fino Sherry",
-        "Cream Sherry": "Cream Sherry"
+        "Cream Sherry": "Cream Sherry",
+        // --- Batch C Additions ---
+        "Raspberry Liqueur": "Himbeerlikör",
+        "Blackberries": "Brombeeren",
+        "Raspberries": "Himbeeren",
+        "Passion Fruit Liqueur": "Passoã (Maracujalikör)",
+        "Spiced Rum": "Spiced Rum",
+        "Vanilla Syrup": "Vanillesirup",
+        "Mango Syrup": "Mangosirup",
+        "Lemonade": "Zitronenlimonade (klar)",
+        "Kumquats": "Kumquats",
+        "Brown Sugar": "Brauner Zucker",
+        "Lime Juice Cordial": "Lime Juice Cordial (z.B. Rose's)",
+        "Orange Vodka": "Orangen-Wodka",
+        "Vanilla Vodka": "Vanille-Wodka",
+        "Banana Nectar": "Bananennektar",
+        "Raki": "Raki",
+        "Melon Liqueur": "Melonenlikör"
     }
 };
 
@@ -541,4 +558,5 @@ if(printBtn) printBtn.addEventListener('click', () => {
 });
 
 initData();
+
 
