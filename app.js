@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (v18.0 - Clean Source Fix) */
+/* app.js - Pixel & Pour Cocktail Calculator (v18.0 - Artisan + Clean Logic) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -322,6 +322,7 @@ function render() {
   if(list.length === 0) {
       results.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--muted);">
         <h3>No matches found</h3>
+        <p>Try clearing filters or adding more ingredients.</p>
       </div>`;
       return;
   }
