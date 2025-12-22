@@ -160,7 +160,55 @@ const DICT = {
         "Shake with ice. Strain into sugar-rimmed glass.": "Auf Eis schütteln. In Glas mit Zuckerrand abseihen.",
         "Shake hard with ice. Strain into glass. Garnish with nutmeg.": "Kräftig auf Eis schütteln. Ins Glas abseihen. Mit Muskatnuss garnieren.",
         "Shake hard with ice. Strain. Top with bitters.": "Kräftig auf Eis schütteln. Abseihen. Mit Bitters toppen.",
-        "Shake hard with ice. Strain. Garnish with nutmeg.": "Kräftig auf Eis schütteln. Abseihen. Mit Muskatnuss garnieren."
+        "Shake hard with ice. Strain. Garnish with nutmeg.": "Kräftig auf Eis schütteln. Abseihen. Mit Muskatnuss garnieren.",
+        // --- New Additions (Batch A & B) ---
+        "A & A Riesling Liqueur": "A & A Riesling Likör",
+        "Cider": "Apfelwein (Cider)",
+        "Pear Brandy": "Birnenbrand",
+        "Peach Liqueur": "Pfirsichlikör",
+        "Dubonnet Rouge": "Dubonnet Rouge",
+        "Orange Bitters": "Orange Bitters",
+        "Pastis": "Pastis",
+        "Passion Fruit Nectar": "Maracujanektar",
+        "White Crème de Menthe": "Pfefferminzlikör (weiß)",
+        "Cherry Brandy": "Kirschbrandy",
+        "Bitter Lemon": "Bitter Lemon",
+        "Apple Juice": "Apfelsaft",
+        "Lime Syrup": "Limettensirup",
+        "Consommé": "Rinderkraftbrühe",
+        "Celery Salt": "Selleriesalz",
+        "Tabasco": "Tabasco",
+        "Guinness": "Guinness",
+        "Crème de Bananes": "Bananenlikör",
+        "Banana Nectar": "Bananennektar",
+        "Banana": "Banane",
+        "Strawberry Liqueur": "Erdbeerlikör",
+        "Strawberry Syrup": "Erdbeersirup",
+        "Melon Liqueur": "Melonenlikör",
+        "Mango Syrup": "Mangosirup",
+        "Coconut Liqueur": "Kokoslikör",
+        "Cranberry Syrup": "Cranberrysirup",
+        "Vanilla Syrup": "Vanillesirup",
+        "Raspberry Liqueur": "Himbeerlikör",
+        "Blackberry": "Brombeere",
+        "Raspberry": "Himbeere",
+        "Kumquat": "Kumquat",
+        "Brown Sugar": "Brauner Zucker",
+        "Cloves": "Nelken",
+        "Cinnamon Stick": "Zimtstange",
+        "Hot Water": "Heißes Wasser",
+        "Hot Coffee": "Heißer Kaffee",
+        "Chocolate Shavings": "Schokoladenraspel",
+        "Egg Yolk": "Eigelb",
+        "Overproof Rum": "Rum (73%)",
+        "Galliano": "Galliano",
+        "Bénédictine": "Bénédictine",
+        "Sloe Gin": "Schlehenlikör (Sloe Gin)",
+        "Apricot Brandy": "Apricot Brandy",
+        "Grand Marnier": "Grand Marnier",
+        "Blue Curaçao": "Blue Curaçao",
+        "Fino Sherry": "Fino Sherry",
+        "Cream Sherry": "Cream Sherry"
     }
 };
 
@@ -493,3 +541,4 @@ if(printBtn) printBtn.addEventListener('click', () => {
 });
 
 initData();
+
