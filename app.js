@@ -285,7 +285,12 @@ const DICT = {
         "Ketchup": "Ketchup",
         "Vinegar": "Essig",
         "Lillet Blanc": "Lillet Blanc",
-        "Peach": "Pfirsich"
+        "Peach": "Pfirsich",
+        // --- Batch Q & R Additions ---
+        "Orange Flower Water": "Orangenblütenwasser",
+        "Falernum": "Falernum (Gewürzsirup)",
+        "Blackberry Liqueur": "Brombeerlikör",
+        "Cherry Heering": "Cherry Heering (Kirschlikör)"
     }
 };
 
@@ -618,6 +623,7 @@ if(printBtn) printBtn.addEventListener('click', () => {
 });
 
 initData();
+
 
 
 
