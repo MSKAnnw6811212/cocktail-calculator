@@ -262,7 +262,15 @@ const DICT = {
         // --- Batch I & J Additions ---
         "Irish Whiskey": "Irischer Whiskey",
         "Midori": "Melonenlikör (Midori)",
-        "Green Chartreuse": "Chartreuse Grün"
+        "Green Chartreuse": "Chartreuse Grün",
+        // --- Batch K & L Additions ---
+        "Hazelnut Schnapps": "Haselnussgeist",
+        "Kahlúa": "Kahlúa (Kaffeelikör)",
+        "Raspberry Syrup": "Himbeersirup",
+        "Citron Vodka": "Zitronen-Wodka",
+        "Tennessee Whiskey": "Tennessee Whiskey (z.B. Jack Daniel's)",
+        "Chocolate Milk": "Kakao (Kalt)",
+        "Cherry Juice": "Kirschsaft"
     }
 };
 
@@ -595,6 +603,7 @@ if(printBtn) printBtn.addEventListener('click', () => {
 });
 
 initData();
+
 
 
 
