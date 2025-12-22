@@ -258,7 +258,11 @@ const DICT = {
         "Yellow Chartreuse": "Chartreuse Gelb",
         // --- Batch H Additions ---
         "Butter": "Butter",
-        "Honey": "Honig"
+        "Honey": "Honig",
+        // --- Batch I & J Additions ---
+        "Irish Whiskey": "Irischer Whiskey",
+        "Midori": "Melonenlikör (Midori)",
+        "Green Chartreuse": "Chartreuse Grün"
     }
 };
 
@@ -591,6 +595,7 @@ if(printBtn) printBtn.addEventListener('click', () => {
 });
 
 initData();
+
 
 
 
