@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (v19.0 - Content Expansion) */
+/* app.js - Pixel & Pour Cocktail Calculator (v19.1 - Bug Fixes Included) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -408,11 +408,11 @@ function convertQty(qtyMl) {
   return [parseFloat(oz.toFixed(2)), 'oz'];
 }
 
-// --- FIX: Logic to handle Target Volume vs Servings accurately ---
+// --- BUG FIX #1 & #2: Safe Logic for Target Volume vs Servings ---
 function scaledMl(ml, recipeId) {
     const val = parseFloat(scaleValue.value);
     
-    // 1. Handle Invalid/Zero Inputs (Fixes Agent's "Negative/Zero" bug)
+    // 1. Handle Invalid/Zero Inputs (Fixes "Negative/Zero" bug)
     if (isNaN(val) || val <= 0) return 0;
 
     // 2. Handle "Servings" Mode
@@ -421,13 +421,12 @@ function scaledMl(ml, recipeId) {
     }
 
     // 3. Handle "Target ml" Mode (Fixes the Math Multiplication bug)
-    // We must calculate the total volume of ONE single serving first to get the ratio
     const recipe = RECIPES.find(r => r.id === recipeId);
     if (!recipe) return ml;
 
     const singleDrinkTotal = recipe.ingredients.reduce((sum, i) => sum + (i.qtyMl || 0), 0);
     
-    // Avoid division by zero for non-liquid recipes
+    // Avoid division by zero
     if (singleDrinkTotal === 0) return 0; 
 
     const ratio = val / singleDrinkTotal; 
@@ -551,7 +550,8 @@ function render() {
         : (selected.size > 0 ? `<div class="status-bar missing">${labels['lbl_missing']} ${missing.length} ${labels['lbl_item_s']}</div>` : '');
 
     const ings = r.ingredients.map(i => {
-      const ml = scaledMl(i.qtyMl || 0);
+      // Pass Recipe ID here to fix Bug #1 completely
+      const ml = scaledMl(i.qtyMl || 0, r.id);
       const [v, u] = convertQty(ml);
       const label = i.label ? ` <span style="font-size:0.9em;color:var(--muted)">(${i.label})</span>` : '';
       const top = i.top ? ' (top up)' : '';
@@ -625,27 +625,40 @@ function renderBarBack() {
     let mlDisplay = "";
     const labels = CURRENT_LANG === 'en' ? UI_EN : DICT.ui;
     
+    // --- BUG FIX #3: Respect Unit Dropdown in Shopping List ---
+    const unit = units.value; // 'ml', 'cl', or 'oz'
+
     if (data.ml > 0) {
         if (roundBottles.checked) {
             const btls = Math.ceil(data.ml / 750);
             mlDisplay = `<strong>${btls}</strong> x 750ml btls`;
         } else {
-            mlDisplay = `${Math.round(data.ml)} ml`;
+            // Dynamic Unit Calculation
+            if (unit === 'ml') {
+                mlDisplay = `${Math.round(data.ml)} ml`;
+            } else if (unit === 'cl') {
+                mlDisplay = `${(data.ml / 10).toFixed(1)} cl`;
+            } else if (unit === 'oz') {
+                mlDisplay = `${(data.ml / 29.57).toFixed(2)} oz`;
+            }
         }
     } else {
         mlDisplay = `<span style="color:var(--muted);">${labels['qty_count']}</span>`;
     }
-    const cl = data.ml > 0 ? (data.ml / 10).toFixed(1) + ' cl' : '—';
-    const oz = data.ml > 0 ? (data.ml / 29.57).toFixed(1) + ' oz' : '—';
+
+    // Keep reference values for checking
+    const cl = (data.ml / 10).toFixed(1);
+    const oz = (data.ml / 29.57).toFixed(1);
+
     const tr = document.createElement('tr');
-    tr.innerHTML = `<td>${t(name, 'ing')}</td><td>${mlDisplay}</td><td>${cl} / ${oz}</td>`;
+    tr.innerHTML = `<td>${t(name, 'ing')}</td><td>${mlDisplay}</td><td>${cl} cl / ${oz} oz</td>`;
     bbTable.appendChild(tr);
   });
 }
 
 q.addEventListener('input', render);
 base.addEventListener('change', () => { q.value = ""; populateDatalist(); render(); });
-units.addEventListener('change', render);
+units.addEventListener('change', () => { render(); renderBarBack(); }); // Updated Listener to redraw shopping list
 scaleMode.addEventListener('change', render);
 scaleValue.addEventListener('input', render);
 langSelect.addEventListener('change', () => { 
@@ -671,20 +684,3 @@ if ('serviceWorker' in navigator) {
     .then(() => console.log('Service Worker Registered'))
     .catch((err) => console.log('SW Failed:', err));
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
