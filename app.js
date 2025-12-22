@@ -290,7 +290,13 @@ const DICT = {
         "Orange Flower Water": "Orangenblütenwasser",
         "Falernum": "Falernum (Gewürzsirup)",
         "Blackberry Liqueur": "Brombeerlikör",
-        "Cherry Heering": "Cherry Heering (Kirschlikör)"
+        "Cherry Heering": "Cherry Heering (Kirschlikör)",
+        // --- Batch S Additions ---
+        "Advocaat": "Eierlikör",
+        "Southern Comfort": "Southern Comfort",
+        "Peychaud's Bitters": "Peychaud's Bitters",
+        "Lemon-Lime Soda": "Zitronenlimonade (z.B. 7-Up)",
+        "American Whiskey": "Amerikanischer Whiskey"
     }
 };
 
@@ -623,6 +629,7 @@ if(printBtn) printBtn.addEventListener('click', () => {
 });
 
 initData();
+
 
 
 
