@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (v19.1 - Bug Fixes Included) */
+/* app.js - Pixel & Pour Cocktail Calculator (v19.2 - QA Fixes Complete) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -161,7 +161,9 @@ const DICT = {
         "Shake hard with ice. Strain into glass. Garnish with nutmeg.": "Kräftig auf Eis schütteln. Ins Glas abseihen. Mit Muskatnuss garnieren.",
         "Shake hard with ice. Strain. Top with bitters.": "Kräftig auf Eis schütteln. Abseihen. Mit Bitters toppen.",
         "Shake hard with ice. Strain. Garnish with nutmeg.": "Kräftig auf Eis schütteln. Abseihen. Mit Muskatnuss garnieren.",
-        // --- New Additions (Batch A & B) ---
+        // ... (Dictionary entries omitted for brevity, but keep them in your file) ...
+        // [Dictionary Section is fine as is from previous versions]
+        // --- Add any missing entries here if needed ---
         "A & A Riesling Liqueur": "A & A Riesling Likör",
         "Cider": "Apfelwein (Cider)",
         "Pear Brandy": "Birnenbrand",
@@ -209,7 +211,6 @@ const DICT = {
         "Blue Curaçao": "Blue Curaçao",
         "Fino Sherry": "Fino Sherry",
         "Cream Sherry": "Cream Sherry",
-        // --- Batch C Additions ---
         "Raspberry Liqueur": "Himbeerlikör",
         "Blackberries": "Brombeeren",
         "Raspberries": "Himbeeren",
@@ -228,20 +229,17 @@ const DICT = {
         "Melon Liqueur": "Melonenlikör",
         "Ginger": "Ingwer",
         "Cucumber": "Gurke",
-        // --- Batch D Additions ---
         "Goldwasser": "Danziger Goldwasser",
         "Peach Bitters": "Pfirsich-Bitter",
         "Cold Black Tea": "Kalter Schwarztee",
         "Genever": "Genever",
         "Curacao Orange": "Curaçao Orange",
-        // --- Batch E Additions ---
         "Creme de Violette": "Veilchenlikör (Crème de Violette)",
         "Absinthe": "Absinth",
         "Dry Orange Curaçao": "Orange Curaçao (Trocken)",
         "Chocolate Liqueur": "Schokoladenlikör",
         "Anisette": "Anislikör",
         "Orange Liqueur": "Orangenlikör",
-        // --- Batch F Additions ---
         "Grappa": "Grappa",
         "Fernet Branca": "Fernet Branca",
         "Apple Schnapps": "Apfelkorn/Apfelschnaps",
@@ -249,21 +247,17 @@ const DICT = {
         "Kirschwasser": "Kirschwasser",
         "Sweet Sherry": "Süßer Sherry (Cream)",
         "Pernod": "Pernod",
-        // --- Batch G Additions ---
         "Pearl Onion": "Silberzwiebel",
         "Green Crème de Menthe": "Pfefferminzlikör (Grün)",
         "Grapefruit": "Grapefruit",
         "Water": "Wasser",
         "Kummel": "Kümmellikör",
         "Yellow Chartreuse": "Chartreuse Gelb",
-        // --- Batch H Additions ---
         "Butter": "Butter",
         "Honey": "Honig",
-        // --- Batch I & J Additions ---
         "Irish Whiskey": "Irischer Whiskey",
         "Midori": "Melonenlikör (Midori)",
         "Green Chartreuse": "Chartreuse Grün",
-        // --- Batch K & L Additions ---
         "Hazelnut Schnapps": "Haselnussgeist",
         "Kahlúa": "Kahlúa (Kaffeelikör)",
         "Raspberry Syrup": "Himbeersirup",
@@ -271,33 +265,27 @@ const DICT = {
         "Tennessee Whiskey": "Tennessee Whiskey (z.B. Jack Daniel's)",
         "Chocolate Milk": "Kakao (Kalt)",
         "Cherry Juice": "Kirschsaft",
-        // --- Batch M Additions ---
         "Malibu": "Kokosrum (Malibu)",
         "Brown Rum": "Brauner Rum",
         "Almond Syrup": "Mandelsirup",
-        // --- Batch N & O Additions ---
         "Red Currant Syrup": "Johannisbeersirup",
         "Orange Curacao": "Orange Curaçao",
         "Irish Cream": "Irish Cream (z.B. Baileys)",
         "White Curacao": "Weißer Curaçao",
-        // --- Batch P Additions ---
         "Pimm's No. 1": "Pimm's No. 1",
         "Ketchup": "Ketchup",
         "Vinegar": "Essig",
         "Lillet Blanc": "Lillet Blanc",
         "Peach": "Pfirsich",
-        // --- Batch Q & R Additions ---
         "Orange Flower Water": "Orangenblütenwasser",
         "Falernum": "Falernum (Gewürzsirup)",
         "Blackberry Liqueur": "Brombeerlikör",
         "Cherry Heering": "Cherry Heering (Kirschlikör)",
-        // --- Batch S Additions ---
         "Advocaat": "Eierlikör",
         "Southern Comfort": "Southern Comfort",
         "Peychaud's Bitters": "Peychaud's Bitters",
         "Lemon-Lime Soda": "Zitronenlimonade (z.B. 7-Up)",
         "American Whiskey": "Amerikanischer Whiskey",
-        // --- Batch T-Z Additions ---
         "Raspberry Spirit": "Himbeergeist",
         "Sour Cherry Nectar": "Sauerkirschnektar",
         "Black Currant Nectar": "Johannisbeernektar",
@@ -333,17 +321,12 @@ async function initData() {
 }
 
 function t(key, type='ui') {
-    // If Language is English, return strict English (Source)
     if (CURRENT_LANG === 'en') return key;
-
-    // If Language is German, look up in Dictionary
     if (type === 'ing') return DICT.ing[key] || key;
     if (type === 'ui') return DICT.ui[key] || key;
-    
     return key;
 }
 
-// UI LABELS (Original English Defaults)
 const UI_EN = {
     lbl_lang: "Language", lbl_search: "Find Recipe", lbl_base: "Base Spirit", lbl_units: "Units",
     lbl_pantry_head: "Pantry — Filter by what you have", lbl_pantry_sub: "Select ingredients to see what you can make.",
@@ -364,9 +347,7 @@ const UI_EN = {
 };
 
 function updateStaticLabels() {
-    // If English, use UI_EN. If German, use DICT.ui
     const labels = CURRENT_LANG === 'en' ? UI_EN : DICT.ui;
-    
     $$('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if(labels[key]) el.textContent = labels[key];
@@ -388,12 +369,8 @@ function getGlassIcon(glassType) {
 
 function typeOf(name) {
   const n = name.toLowerCase();
-  
   if(ESSENTIALS.map(e=>e.toLowerCase()).includes(n)) return 'Essentials';
-  
-  // FIX: Ginger Ale is NOT a Spirit (Must check before Spirit check)
   if (n.includes('ginger') || n.includes('ale') || n.includes('beer')) return 'Mixer/NA';
-
   if (/gin|wodka|vodka|rum|whisk|bourbon|rye|tequila|cognac|brandy|cachaça/.test(n)) return 'Spirit';
   if (/vermouth|wermut|sherry|porto|aperitif|campari|amaro|liqueur|likör|sec|cointreau|kahlua/.test(n)) return 'Liqueur';
   if (/wine|wein|champagner|sekt|prosecco|sparkling/.test(n)) return 'Wine/Bubbly';
@@ -408,38 +385,34 @@ function convertQty(qtyMl) {
   return [parseFloat(oz.toFixed(2)), 'oz'];
 }
 
-// --- BUG FIX #1 & #2: Safe Logic for Target Volume vs Servings ---
+// BUG #1 & #2 FIX
 function scaledMl(ml, recipeId) {
     const val = parseFloat(scaleValue.value);
-    
-    // 1. Handle Invalid/Zero Inputs (Fixes "Negative/Zero" bug)
     if (isNaN(val) || val <= 0) return 0;
-
-    // 2. Handle "Servings" Mode
     if (scaleMode.value === 'servings') {
         return ml * val;
     }
-
-    // 3. Handle "Target ml" Mode (Fixes the Math Multiplication bug)
     const recipe = RECIPES.find(r => r.id === recipeId);
     if (!recipe) return ml;
-
     const singleDrinkTotal = recipe.ingredients.reduce((sum, i) => sum + (i.qtyMl || 0), 0);
-    
-    // Avoid division by zero
     if (singleDrinkTotal === 0) return 0; 
-
     const ratio = val / singleDrinkTotal; 
     return ml * ratio;
 }
 
+// BUG #4 FIX: Regex Word Boundaries
 function matchesSelection(ingName, subset = selected) {
   if (subset.has(ingName)) return true;
   const sub = SUBS[ingName];
   if (sub && sub.some(s => subset.has(s))) return true;
+  
   for (const [label, pattern] of Object.entries(GENERICS)) {
     if (!subset.has(label)) continue;
-    try { if (new RegExp(pattern, 'i').test(ingName)) return true; } catch (e) { }
+    try { 
+       // Wrapped in word boundaries (\b) and non-capturing group (?:)
+       const regex = new RegExp(`\\b(?:${pattern})\\b`, 'i');
+       if (regex.test(ingName)) return true; 
+    } catch (e) { }
   }
   return false;
 }
@@ -473,21 +446,16 @@ function renderPantry() {
   }
 
   const order = ['Essentials', 'Spirit', 'Liqueur', 'Wine/Bubbly', 'Mixer/NA'];
-  // Categories are always keys for UI dict
   const catKeys = { 'Essentials': 'cat_essentials', 'Spirit': 'cat_spirit', 'Liqueur': 'cat_liqueur', 'Wine/Bubbly': 'cat_wine_bubbly', 'Mixer/NA': 'cat_mixer_na' };
 
   pantryBox.innerHTML = order.map(g => {
     const list = groups[g];
     if(!list || list.length === 0) return '';
-    
-    // Get Title based on Lang
     const labels = CURRENT_LANG === 'en' ? UI_EN : DICT.ui;
     const title = labels[catKeys[g]]; 
-    
     return `<div class="pantry-group"><strong>${title}</strong><div class="pantry-grid">` +
       [...new Set(list)].sort().map(name => {
          const isChecked = selected.has(name) ? 'checked' : '';
-         // Translate Ingredient Label only if DE
          const labelText = t(name, 'ing');
          return `<label class="pantry-item"><input type="checkbox" value="${name}" ${isChecked}> ${labelText}</label>`;
       }).join('') + `</div></div>`;
@@ -501,15 +469,12 @@ function renderPantry() {
   });
 }
 
-// FIXING BUG #3 (FAIL Test D): Strict Pantry Filtering
+// BUG #3 FIX: Strict Filtering
 function render() {
   const qv = q.value.trim().toLowerCase();
   const bv = base.value;
   clearSearchBtn.hidden = qv === "";
-
   const labels = CURRENT_LANG === 'en' ? UI_EN : DICT.ui;
-
-  // 1. Check if we are in "Default State" (No filters active)
   const isDefaultFilters = qv === "" && bv === "All" && selected.size === 0;
   if(isDefaultFilters) {
       results.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:var(--muted);">
@@ -519,40 +484,18 @@ function render() {
       </div>`;
       return;
   }
-
-  // 2. Prepare the "Active Filters" list
-  // We exclude Essentials (Ice, Sugar, etc.) so selecting them doesn't hide recipes.
   const activeFilters = new Set();
-  selected.forEach(s => { 
-    if (!ESSENTIALS.includes(s)) activeFilters.add(s); 
-  });
-
-  // 3. Filter the Recipes (The Strict Logic)
+  selected.forEach(s => { if (!ESSENTIALS.includes(s)) activeFilters.add(s); });
   let list = RECIPES.filter(r => {
-    // A. Base Spirit Filter
     const matchesBase = bv === 'All' || (r.base && r.base.includes(bv));
-    
-    // B. Search Text Filter
     const matchesSearch = qv === '' || r.name.toLowerCase().includes(qv);
-    
-    // C. Pantry Filter (Strict)
-    let matchesPantry = true; 
-    
-    // Only apply strict filtering if we have "Real" ingredients selected (not just Ice)
+    let matchesPantry = true;
     if (activeFilters.size > 0) {
-        // DOES THE RECIPE CONTAIN AT LEAST ONE OF MY SELECTED INGREDIENTS?
-        // We use 'matchesSelection' to handle substitutions and generic matches too.
         matchesPantry = r.ingredients.some(ing => matchesSelection(ing.name, activeFilters));
     }
-
-    // A recipe must pass ALL three tests to be shown
     return matchesBase && matchesSearch && matchesPantry;
   });
-
-  // 4. Sort the results (Most "Complete" drinks go to the top)
   list.sort((a, b) => getMissingIngredients(a).length - getMissingIngredients(b).length);
-
-  // 5. Show "No Results" message if needed
   if(list.length === 0) {
       results.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--muted);">
         <h3>No matches found</h3>
@@ -560,37 +503,27 @@ function render() {
       </div>`;
       return;
   }
-
-  // 6. Draw the Cards (HTML)
   results.innerHTML = list.map(r => {
     const missing = getMissingIngredients(r);
     const isMakeable = missing.length === 0;
-    
     const statusBadge = isMakeable && selected.size > 0
         ? `<div class="status-bar ok">✅ ${labels['lbl_makeable']}</div>` 
         : (selected.size > 0 ? `<div class="status-bar missing">${labels['lbl_missing']} ${missing.length} ${labels['lbl_item_s']}</div>` : '');
-
     const ings = r.ingredients.map(i => {
-      // Use our FIXED scaledMl function here
       const ml = scaledMl(i.qtyMl || 0, r.id);
       const [v, u] = convertQty(ml);
       const label = i.label ? ` <span style="font-size:0.9em;color:var(--muted)">(${i.label})</span>` : '';
       const top = i.top ? ' (top up)' : '';
       const name = t(i.name, 'ing'); 
       const qtyDisplay = i.qtyMl ? `<span class="qty">${v} ${u}</span>` : '—';
-      
       const isMissing = selected.size > 0 && !i.optional && !matchesSelection(i.name);
       const isOwned = selected.size > 0 && (i.optional || matchesSelection(i.name));
-
       let style = ''; let icon = '';
       if (isMissing) { style = 'color:var(--fail); font-weight:700;'; icon = ' 🛒'; } 
       else if (isOwned) { style = 'color:var(--ok); font-weight:600;'; icon = ' ✔'; }
-
       return `<div style="${style}">${qtyDisplay} ${name}${label}${top}${icon}</div>`;
     }).join('');
-
     const icon = getGlassIcon(r.glass);
-
     return `<article class="recipe ${isMakeable ? '' : 'faded'}">
       ${statusBadge}
       <div style="display:flex;justify-content:space-between;align-items:start; padding-top:10px;">
@@ -604,8 +537,6 @@ function render() {
       </div>
     </article>`;
   }).join('');
-
-  // Re-attach button listeners
   results.querySelectorAll('button[data-add]').forEach(btn => {
     btn.addEventListener('click', () => {
       const recipe = RECIPES.find(r => r.id === btn.getAttribute('data-add'));
@@ -613,6 +544,7 @@ function render() {
     });
   });
 }
+
 function addToBarBack(recipe) {
   const defServings = Math.max(1, Number(scaleMode.value === 'servings' ? scaleValue.value : 1));
   const current = barBack.get(recipe.id) || { recipe, servings: 0 };
@@ -626,9 +558,7 @@ function renderBarBack() {
   bbList.innerHTML = Array.from(barBack.values()).map(({ recipe, servings }) => {
     return `<span class="bb-chip">${recipe.name} × ${servings} <button data-rm="${recipe.id}" class="link" style="color:var(--fail);margin-left:5px;">×</button></span>`;
   }).join('');
-  
   bbList.querySelectorAll('button[data-rm]').forEach(btn => btn.addEventListener('click', () => removeFromBarBack(btn.getAttribute('data-rm'))));
-
   const totals = new Map();
   for (const { recipe, servings } of barBack.values()) {
     for (const ing of recipe.ingredients) {
@@ -640,37 +570,26 @@ function renderBarBack() {
       rec.count += servings;
     }
   }
-
   bbTable.innerHTML = "";
   Array.from(totals.entries()).sort().forEach(([name, data]) => {
     let mlDisplay = "";
     const labels = CURRENT_LANG === 'en' ? UI_EN : DICT.ui;
-    
-    // --- BUG FIX #3: Respect Unit Dropdown in Shopping List ---
-    const unit = units.value; // 'ml', 'cl', or 'oz'
-
+    // BUG #3b FIX
+    const unit = units.value; 
     if (data.ml > 0) {
         if (roundBottles.checked) {
             const btls = Math.ceil(data.ml / 750);
             mlDisplay = `<strong>${btls}</strong> x 750ml btls`;
         } else {
-            // Dynamic Unit Calculation
-            if (unit === 'ml') {
-                mlDisplay = `${Math.round(data.ml)} ml`;
-            } else if (unit === 'cl') {
-                mlDisplay = `${(data.ml / 10).toFixed(1)} cl`;
-            } else if (unit === 'oz') {
-                mlDisplay = `${(data.ml / 29.57).toFixed(2)} oz`;
-            }
+            if (unit === 'ml') mlDisplay = `${Math.round(data.ml)} ml`;
+            else if (unit === 'cl') mlDisplay = `${(data.ml / 10).toFixed(1)} cl`;
+            else if (unit === 'oz') mlDisplay = `${(data.ml / 29.57).toFixed(2)} oz`;
         }
     } else {
         mlDisplay = `<span style="color:var(--muted);">${labels['qty_count']}</span>`;
     }
-
-    // Keep reference values for checking
     const cl = (data.ml / 10).toFixed(1);
     const oz = (data.ml / 29.57).toFixed(1);
-
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${t(name, 'ing')}</td><td>${mlDisplay}</td><td>${cl} cl / ${oz} oz</td>`;
     bbTable.appendChild(tr);
@@ -679,7 +598,7 @@ function renderBarBack() {
 
 q.addEventListener('input', render);
 base.addEventListener('change', () => { q.value = ""; populateDatalist(); render(); });
-units.addEventListener('change', () => { render(); renderBarBack(); }); // Updated Listener to redraw shopping list
+units.addEventListener('change', () => { render(); renderBarBack(); });
 scaleMode.addEventListener('change', render);
 scaleValue.addEventListener('input', render);
 langSelect.addEventListener('change', () => { 
@@ -699,10 +618,8 @@ if(printBtn) printBtn.addEventListener('click', () => {
 });
 
 initData();
-// -- PWA Service Worker Registration --
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js')
     .then(() => console.log('Service Worker Registered'))
     .catch((err) => console.log('SW Failed:', err));
 }
-
