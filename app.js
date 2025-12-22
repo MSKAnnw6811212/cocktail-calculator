@@ -270,7 +270,11 @@ const DICT = {
         "Citron Vodka": "Zitronen-Wodka",
         "Tennessee Whiskey": "Tennessee Whiskey (z.B. Jack Daniel's)",
         "Chocolate Milk": "Kakao (Kalt)",
-        "Cherry Juice": "Kirschsaft"
+        "Cherry Juice": "Kirschsaft",
+        // --- Batch M Additions ---
+        "Malibu": "Kokosrum (Malibu)",
+        "Brown Rum": "Brauner Rum",
+        "Almond Syrup": "Mandelsirup"
     }
 };
 
@@ -603,6 +607,7 @@ if(printBtn) printBtn.addEventListener('click', () => {
 });
 
 initData();
+
 
 
 
