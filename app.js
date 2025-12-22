@@ -1,4 +1,4 @@
-/* app.js - Pixel & Pour Cocktail Calculator (v18.0 - Artisan + Clean Logic) */
+/* app.js - Pixel & Pour Cocktail Calculator (v19.0 - Content Expansion) */
 
 const $ = sel => document.querySelector(sel);
 const $$ = sel => Array.from(document.querySelectorAll(sel));
@@ -32,7 +32,7 @@ const barBack = new Map();
 let CURRENT_LANG = 'en';
 
 // -- ENGLISH SOURCE CONSTANTS --
-const ESSENTIALS = ["Ice Cubes", "Sugar", "Salt", "Lime", "Lemon", "Orange", "Mint", "Olives", "Cherry", "Pepper"];
+const ESSENTIALS = ["Ice Cubes", "Sugar", "Salt", "Lime", "Lemon", "Orange", "Mint", "Olives", "Cherry", "Pepper", "Nutmeg"];
 const HIDDEN_SPECIFICS = [
     "Bourbon Whiskey", "Rye Whiskey", "Canadian Whisky", "Scotch Whisky",
     "White Rum", "Dark Rum", "Aged Rum", 
@@ -62,24 +62,24 @@ const DICT = {
     },
     // Ingredients & Data
     ing: {
-        "Ice Cubes": "Eiswürfel", "Crushed Ice": "Crushed Ice", "Sugar": "Zucker", "Salt": "Salz", "Pepper": "Pfeffer",
+        "Ice Cubes": "Eiswürfel", "Crushed Ice": "Crushed Ice", "Sugar": "Zucker", "Salt": "Salz", "Pepper": "Pfeffer", "Nutmeg": "Muskatnuss",
         "Lime": "Limette", "Lemon": "Zitrone", "Orange": "Orange", "Mint": "Minze", "Olives": "Oliven", "Cherry": "Kirsche", "Strawberries": "Erdbeeren", "Vanilla Ice Cream": "Vanilleeis", "Celery": "Staudensellerie",
-        "Gin": "Gin", "Rum (Any)": "Rum (Alle)", "Whiskey (Any)": "Whiskey (Alle)", "Vodka": "Wodka", "Tequila": "Tequila",
-        "Cachaça": "Cachaça", "Cognac": "Cognac", "Brandy": "Brandy",
-        "Coffee Liqueur": "Kaffeelikör", "Campari": "Campari", "Aperol": "Aperol", "Amaretto": "Amaretto",
-        "Maraschino": "Maraschino", "Cream Liqueur": "Sahnelikör", "Triple Sec": "Triple Sec",
-        "Prosecco": "Prosecco", "Champagne": "Champagner", "Red Wine": "Rotwein", "White Wine": "Weißwein", "Sparkling Wine": "Schaumwein",
+        "Gin": "Gin", "Sloe Gin": "Schlehenlikör (Sloe Gin)", "Rum (Any)": "Rum (Alle)", "Whiskey (Any)": "Whiskey (Alle)", "Vodka": "Wodka", "Tequila": "Tequila",
+        "Cachaça": "Cachaça", "Cognac": "Cognac", "Brandy": "Brandy", "Pisco": "Pisco", "Calvados": "Calvados",
+        "Coffee Liqueur": "Kaffeelikör", "Campari": "Campari", "Aperol": "Aperol", "Amaretto": "Amaretto", "Galliano": "Galliano", "Bénédictine": "Bénédictine",
+        "Maraschino": "Maraschino", "Cream Liqueur": "Sahnelikör", "Triple Sec": "Triple Sec", "White Crème de Cacao": "Creme de Cacao (Weiß)", "Brown Crème de Cacao": "Creme de Cacao (Braun)",
+        "Prosecco": "Prosecco", "Champagne": "Champagner", "Red Wine": "Rotwein", "White Wine": "Weißwein", "Sparkling Wine": "Schaumwein", "Guinness": "Guinness",
         "Vermouth": "Wermut", "Dry Vermouth": "Wermut Trocken", "Sweet Vermouth": "Wermut Rot", "Sherry": "Sherry", "Port": "Portwein",
         "Lemon Juice": "Zitronensaft", "Lime Juice": "Limettensaft", "Orange Juice": "Orangensaft",
         "Pineapple Juice": "Ananassaft", "Cranberry Juice": "Cranberrysaft", "Tomato Juice": "Tomatensaft",
         "Grapefruit Soda": "Grapefruit Soda", "Cola": "Cola", "Soda Water": "Sodawasser", "Tonic Water": "Tonic Water",
         "Ginger Beer": "Ingwerbier", "Ginger Ale": "Ginger Ale",
-        "Sugar Syrup": "Zuckersirup", "Orgeat": "Mandelsirup", "Grenadine": "Grenadine", "Honey Syrup": "Honigsirup",
+        "Sugar Syrup": "Zuckersirup", "Orgeat": "Mandelsirup", "Grenadine": "Grenadine", "Honey Syrup": "Honigsirup", "Coconut Syrup": "Kokossirup",
         "Cream": "Sahne", "Milk": "Milch", "Coconut Cream": "Kokosnusscreme",
-        "Egg White": "Eiweiß", "Worcestershire Sauce": "Worcestershiresauce", "Angostura Bitters": "Angostura Bitters",
+        "Egg White": "Eiweiß", "Egg Yolk": "Eigelb", "Worcestershire Sauce": "Worcestershiresauce", "Angostura Bitters": "Angostura Bitters",
         "Peach Puree": "Pfirsichpüree",
         "Bourbon Whiskey": "Bourbon Whiskey", "Rye Whiskey": "Rye Whiskey", "White Rum": "Weißer Rum", "Dark Rum": "Dunkler Rum", "Aged Rum": "Brauner Rum",
-        "White Cane Sugar": "Weißer Rohrzucker",
+        "White Cane Sugar": "Weißer Rohrzucker", "Apricot Brandy": "Apricot Brandy", "Grand Marnier": "Grand Marnier", "Blue Curaçao": "Blue Curaçao",
 
         // Methods & Glass
         "Stir": "Rühren", "Shake": "Schütteln", "Build": "Bauen", "Muddle": "Zerstoßen", 
@@ -96,6 +96,29 @@ const DICT = {
         "Build in glass over ice. Stir.": "Im Glas auf Eis bauen. Umrühren.",
         "Shake hard. Strain.": "Kräftig schütteln. Abseihen.",
         "Muddle mint gently. Add ingredients and ice. Top with soda.": "Minze andrücken. Zutaten & Eis dazu. Mit Soda toppen.",
+        "Build in mug over ice.": "Im Becher auf Eis bauen.",
+        "Build over ice.": "Direkt auf Eis bauen.",
+        "Stir with ice. Garnish with celery.": "Auf Eis rühren. Mit Sellerie garnieren.",
+        "Shake with ice. Strain.": "Mit Eis schütteln. Abseihen.",
+        "Shake (no soda). Top with soda.": "Schütteln (ohne Soda). Mit Soda toppen.",
+        "Shake hard. Pour unstrained.": "Kräftig schütteln. Ungeseiht (mit Eis) ins Glas gießen.",
+        "Shake or blend.": "Schütteln oder im Mixer blenden.",
+        "Build in glass over ice.": "Im Glas auf Eis bauen.",
+        "Muddle lime/sugar. Add ice/cachaça.": "Limette & Zucker zerstoßen. Eis & Cachaça dazu.",
+        "Shake. Strain. Top with soda.": "Schütteln. Abseihen. Mit Soda toppen.",
+        "Pour puree. Top gently.": "Püree in das Glas geben. Vorsichtig mit Schaumwein auffüllen.",
+        "Shake. Strain into flute. Top.": "Schütteln. In Flöte abseihen. Auffüllen.",
+        "Build in glass.": "Im Glas bauen.",
+        "Muddle mint. Add ice/bourbon. Stir until frosted.": "Minze andrücken. Eis/Bourbon dazu. Rühren bis das Glas beschlägt.",
+        "Build. Sink grenadine.": "Bauen. Grenadine am Rand hineinsinken lassen.",
+        "Shake all spirits/sour. Strain. Top with Cola.": "Spirituosen & Sours schütteln. Abseihen. Mit Cola toppen.",
+        "Build in glass over ice. Garnish with lime wedge.": "Im Glas auf Eis bauen. Mit Limettenschnitz garnieren.",
+        "Stir with ice until very cold. Strain into chilled glass. Garnish with lemon twist or olive.": "Kalt rühren. In gekühltes Glas abseihen. Mit Zitrone/Olive garnieren.",
+        "Dry shake (no ice) first, then shake with ice. Strain over fresh ice.": "Erst ohne Eis schütteln (Dry Shake), dann mit Eis. Abseihen.",
+        "Shake hard with ice to create foam. Strain into chilled glass.": "Kräftig auf Eis schütteln (für Schaum). In gekühltes Glas abseihen.",
+        "Build in glass over ice. Stir gently. Garnish with orange slice.": "Im Glas auf Eis bauen. Sanft rühren. Mit Orange garnieren.",
+        "Stir with ice. Strain into chilled glass. Garnish with cherry.": "Auf Eis rühren. In gekühltes Glas abseihen. Mit Kirsche garnieren.",
+        "Muddle mint gently. Add ingredients and ice. Top with soda.": "Minze sanft andrücken. Zutaten & Eis dazu. Mit Soda toppen.",
         "Build in mug over ice. Top with Ginger Beer.": "Im Becher auf Eis bauen. Mit Ginger Beer auffüllen.",
         "Fill glass with ice. Add Prosecco, then Aperol, then Soda.": "Glas mit Eis füllen. Prosecco, dann Aperol, dann Soda.",
         "Stir gently with ice. Garnish with celery stick.": "Sanft auf Eis rühren. Mit Selleriestange garnieren.",
@@ -103,7 +126,7 @@ const DICT = {
         "Shake (except soda). Strain onto ice. Top with soda.": "Schütteln (außer Soda). Auf Eis abseihen. Mit Soda toppen.",
         "Shake hard. Pour unstrained into glass.": "Kräftig schütteln. Ungeseiht ins Glas gießen.",
         "Shake hard or blend with crushed ice.": "Kräftig schütteln oder blenden.",
-        "Build in glass over ice. Garnish with lime wedge.": "Im Glas auf Eis bauen. Mit Limettenschnitz garnieren.",
+        "Build in glass over ice. Garnish with lime wedge.": "Im Glas auf Eis bauen. Mit Limette garnieren.",
         "Muddle lime chunks and sugar. Add ice and Cachaça. Stir.": "Limette & Zucker zerstoßen. Eis & Cachaça dazu. Rühren.",
         "Shake (no soda). Strain into glass (no ice). Top with soda.": "Schütteln (ohne Soda). Ins Glas (ohne Eis) abseihen. Mit Soda toppen.",
         "Build vodka and liqueur over ice. Float cream on top.": "Wodka & Likör auf Eis bauen. Sahne darüberschichten.",
@@ -114,10 +137,30 @@ const DICT = {
         "Build tequila and juice. Sink grenadine to bottom.": "Tequila & Saft bauen. Grenadine hineinsinken lassen.",
         "Shake all spirits/sour. Strain into ice-filled glass. Top with Cola.": "Alles (außer Cola) schütteln. Auf Eis abseihen. Mit Cola toppen.",
         "Build over ice. Garnish with cherry.": "Auf Eis bauen. Mit Kirsche garnieren.",
-        "Dry shake (no ice) first, then shake with ice. Strain over fresh ice.": "Erst ohne Eis schütteln (Dry Shake), dann mit Eis. Abseihen.",
-        "Shake hard with ice to create foam. Strain into chilled glass.": "Kräftig auf Eis schütteln (für Schaum). In gekühltes Glas abseihen.",
-        "Build in glass over ice. Stir gently. Garnish with orange slice.": "Im Glas auf Eis bauen. Sanft rühren. Mit Orange garnieren.",
-        "Stir with ice. Strain into chilled glass. Garnish with cherry.": "Auf Eis rühren. In gekühltes Glas abseihen. Mit Kirsche garnieren."
+        "Build in glass over ice. Garnish with orange slice.": "Im Glas auf Eis bauen. Mit Orangenscheibe garnieren.",
+        "Shake with ice. Strain. Garnish with nutmeg.": "Auf Eis schütteln. Abseihen. Mit Muskatnuss garnieren.",
+        "Soak sugar cube in bitters. Drop into flute. Top with Champagne.": "Zuckerwürfel in Bitter tränken. Ins Glas geben. Mit Champagner auffüllen.",
+        "Fill half with Champagne, top with Guinness.": "Halb mit Champagner füllen, mit Guinness toppen.",
+        "Build in glass (or silver cup). Top with Champagne.": "Im Glas (oder Silberbecher) bauen. Mit Champagner toppen.",
+        "Shake (except Champagne). Strain into flute. Top with Champagne.": "Schütteln (außer Champagner). In Flöte abseihen. Mit Champagner toppen.",
+        "Shake with ice. Strain. Garnish with nutmeg.": "Auf Eis schütteln. Abseihen. Mit Muskatnuss garnieren.",
+        "Shake (except soda). Strain into glass. Top with soda.": "Schütteln (außer Soda). Ins Glas abseihen. Mit Soda toppen.",
+        "Shake with ice. Strain into ice-filled glass.": "Auf Eis schütteln. In eisgefülltes Glas abseihen.",
+        "Build vodka and juice over ice. Float Galliano on top.": "Wodka & Saft auf Eis bauen. Galliano darüberschichten.",
+        "Shake hard or blend. Pour into glass over crushed ice.": "Kräftig schütteln oder blenden. Auf Crushed Ice gießen.",
+        "Build in glass over ice. Top with Ginger Ale or Lemonade.": "Im Glas auf Eis bauen. Mit Ginger Ale oder Limonade toppen.",
+        "Rim glass with salt. Build ingredients over ice.": "Glasrand mit Salz versehen. Zutaten auf Eis bauen.",
+        "Build in glass over ice.": "Im Glas auf Eis bauen.",
+        "Blend with crushed ice.": "Mit Crushed Ice blenden.",
+        "Shake with ice. Pour into large glass.": "Auf Eis schütteln. In großes Glas gießen.",
+        "Shake hard with ice. Pour unstrained into large glass.": "Kräftig auf Eis schütteln. Ungeseiht in großes Glas gießen.",
+        "Build over ice. Squeeze lime wedge. Top with Ginger Ale.": "Auf Eis bauen. Limette auspressen. Mit Ginger Ale toppen.",
+        "Shake with ice. Strain over fresh ice.": "Auf Eis schütteln. Auf frisches Eis abseihen.",
+        "Build in glass (or snifter). No ice.": "Im Glas (oder Schwenker) bauen. Kein Eis.",
+        "Shake with ice. Strain into sugar-rimmed glass.": "Auf Eis schütteln. In Glas mit Zuckerrand abseihen.",
+        "Shake hard with ice. Strain into glass. Garnish with nutmeg.": "Kräftig auf Eis schütteln. Ins Glas abseihen. Mit Muskatnuss garnieren.",
+        "Shake hard with ice. Strain. Top with bitters.": "Kräftig auf Eis schütteln. Abseihen. Mit Bitters toppen.",
+        "Shake hard with ice. Strain. Garnish with nutmeg.": "Kräftig auf Eis schütteln. Abseihen. Mit Muskatnuss garnieren."
     }
 };
 
