@@ -240,7 +240,15 @@ const DICT = {
         "Dry Orange Curaçao": "Orange Curaçao (Trocken)",
         "Chocolate Liqueur": "Schokoladenlikör",
         "Anisette": "Anislikör",
-        "Orange Liqueur": "Orangenlikör"
+        "Orange Liqueur": "Orangenlikör",
+        // --- Batch F Additions ---
+        "Grappa": "Grappa",
+        "Fernet Branca": "Fernet Branca",
+        "Apple Schnapps": "Apfelkorn/Apfelschnaps",
+        "Pousse-Café": "Pousse-Café (geschichtet)",
+        "Kirschwasser": "Kirschwasser",
+        "Sweet Sherry": "Süßer Sherry (Cream)",
+        "Pernod": "Pernod"
     }
 };
 
@@ -573,6 +581,7 @@ if(printBtn) printBtn.addEventListener('click', () => {
 });
 
 initData();
+
 
 
 
