@@ -408,7 +408,31 @@ function convertQty(qtyMl) {
   return [parseFloat(oz.toFixed(2)), 'oz'];
 }
 
-function scaledMl(ml) { return ml * Math.max(0.1, Number(scaleValue.value || 1)); }
+// --- FIX: Logic to handle Target Volume vs Servings accurately ---
+function scaledMl(ml, recipeId) {
+    const val = parseFloat(scaleValue.value);
+    
+    // 1. Handle Invalid/Zero Inputs (Fixes Agent's "Negative/Zero" bug)
+    if (isNaN(val) || val <= 0) return 0;
+
+    // 2. Handle "Servings" Mode
+    if (scaleMode.value === 'servings') {
+        return ml * val;
+    }
+
+    // 3. Handle "Target ml" Mode (Fixes the Math Multiplication bug)
+    // We must calculate the total volume of ONE single serving first to get the ratio
+    const recipe = RECIPES.find(r => r.id === recipeId);
+    if (!recipe) return ml;
+
+    const singleDrinkTotal = recipe.ingredients.reduce((sum, i) => sum + (i.qtyMl || 0), 0);
+    
+    // Avoid division by zero for non-liquid recipes
+    if (singleDrinkTotal === 0) return 0; 
+
+    const ratio = val / singleDrinkTotal; 
+    return ml * ratio;
+}
 
 function matchesSelection(ingName, subset = selected) {
   if (subset.has(ingName)) return true;
@@ -647,6 +671,7 @@ if ('serviceWorker' in navigator) {
     .then(() => console.log('Service Worker Registered'))
     .catch((err) => console.log('SW Failed:', err));
 }
+
 
 
 
