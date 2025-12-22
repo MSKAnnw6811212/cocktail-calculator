@@ -225,7 +225,9 @@ const DICT = {
         "Vanilla Vodka": "Vanille-Wodka",
         "Banana Nectar": "Bananennektar",
         "Raki": "Raki",
-        "Melon Liqueur": "Melonenlikör"
+        "Melon Liqueur": "Melonenlikör",
+        "Ginger": "Ingwer",
+        "Cucumber": "Gurke"
     }
 };
 
@@ -558,5 +560,6 @@ if(printBtn) printBtn.addEventListener('click', () => {
 });
 
 initData();
+
 
 
