@@ -296,7 +296,19 @@ const DICT = {
         "Southern Comfort": "Southern Comfort",
         "Peychaud's Bitters": "Peychaud's Bitters",
         "Lemon-Lime Soda": "Zitronenlimonade (z.B. 7-Up)",
-        "American Whiskey": "Amerikanischer Whiskey"
+        "American Whiskey": "Amerikanischer Whiskey",
+        // --- Batch T-Z Additions ---
+        "Raspberry Spirit": "Himbeergeist",
+        "Sour Cherry Nectar": "Sauerkirschnektar",
+        "Black Currant Nectar": "Johannisbeernektar",
+        "Cranberry Syrup": "Preiselbeersirup",
+        "Strawberry Puree": "Erdbeerpüree",
+        "Mandarin Vodka": "Mandrin Vodka",
+        "Lemon Vodka": "Citron Vodka",
+        "Licor 43": "Licor 43",
+        "Galliano Vanilla": "Galliano Vanilla",
+        "Green Banana Liqueur": "Grüne Banane (Likör)",
+        "Passion Fruit Syrup": "Maracujasirup"
     }
 };
 
@@ -629,6 +641,7 @@ if(printBtn) printBtn.addEventListener('click', () => {
 });
 
 initData();
+
 
 
 
