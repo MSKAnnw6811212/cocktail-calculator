@@ -1,0 +1,21 @@
+{
+  "name": "Pixel & Pour",
+  "short_name": "Cocktails",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#f4f1ea",
+  "theme_color": "#cba35c",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
