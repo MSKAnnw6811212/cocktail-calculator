@@ -501,6 +501,7 @@ function renderPantry() {
   });
 }
 
+// FIXING BUG #3 (FAIL Test D): Strict Pantry Filtering
 function render() {
   const qv = q.value.trim().toLowerCase();
   const bv = base.value;
@@ -508,6 +509,7 @@ function render() {
 
   const labels = CURRENT_LANG === 'en' ? UI_EN : DICT.ui;
 
+  // 1. Check if we are in "Default State" (No filters active)
   const isDefaultFilters = qv === "" && bv === "All" && selected.size === 0;
   if(isDefaultFilters) {
       results.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:60px 20px; color:var(--muted);">
@@ -518,21 +520,39 @@ function render() {
       return;
   }
 
+  // 2. Prepare the "Active Filters" list
+  // We exclude Essentials (Ice, Sugar, etc.) so selecting them doesn't hide recipes.
   const activeFilters = new Set();
-  selected.forEach(s => { if (!ESSENTIALS.includes(s)) activeFilters.add(s); });
+  selected.forEach(s => { 
+    if (!ESSENTIALS.includes(s)) activeFilters.add(s); 
+  });
 
+  // 3. Filter the Recipes (The Strict Logic)
   let list = RECIPES.filter(r => {
+    // A. Base Spirit Filter
     const matchesBase = bv === 'All' || (r.base && r.base.includes(bv));
+    
+    // B. Search Text Filter
     const matchesSearch = qv === '' || r.name.toLowerCase().includes(qv);
-    let matchesPantry = true;
+    
+    // C. Pantry Filter (Strict)
+    let matchesPantry = true; 
+    
+    // Only apply strict filtering if we have "Real" ingredients selected (not just Ice)
     if (activeFilters.size > 0) {
+        // DOES THE RECIPE CONTAIN AT LEAST ONE OF MY SELECTED INGREDIENTS?
+        // We use 'matchesSelection' to handle substitutions and generic matches too.
         matchesPantry = r.ingredients.some(ing => matchesSelection(ing.name, activeFilters));
     }
+
+    // A recipe must pass ALL three tests to be shown
     return matchesBase && matchesSearch && matchesPantry;
   });
 
+  // 4. Sort the results (Most "Complete" drinks go to the top)
   list.sort((a, b) => getMissingIngredients(a).length - getMissingIngredients(b).length);
 
+  // 5. Show "No Results" message if needed
   if(list.length === 0) {
       results.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--muted);">
         <h3>No matches found</h3>
@@ -541,6 +561,7 @@ function render() {
       return;
   }
 
+  // 6. Draw the Cards (HTML)
   results.innerHTML = list.map(r => {
     const missing = getMissingIngredients(r);
     const isMakeable = missing.length === 0;
@@ -550,7 +571,7 @@ function render() {
         : (selected.size > 0 ? `<div class="status-bar missing">${labels['lbl_missing']} ${missing.length} ${labels['lbl_item_s']}</div>` : '');
 
     const ings = r.ingredients.map(i => {
-      // Pass Recipe ID here to fix Bug #1 completely
+      // Use our FIXED scaledMl function here
       const ml = scaledMl(i.qtyMl || 0, r.id);
       const [v, u] = convertQty(ml);
       const label = i.label ? ` <span style="font-size:0.9em;color:var(--muted)">(${i.label})</span>` : '';
@@ -584,6 +605,7 @@ function render() {
     </article>`;
   }).join('');
 
+  // Re-attach button listeners
   results.querySelectorAll('button[data-add]').forEach(btn => {
     btn.addEventListener('click', () => {
       const recipe = RECIPES.find(r => r.id === btn.getAttribute('data-add'));
@@ -591,7 +613,6 @@ function render() {
     });
   });
 }
-
 function addToBarBack(recipe) {
   const defServings = Math.max(1, Number(scaleMode.value === 'servings' ? scaleValue.value : 1));
   const current = barBack.get(recipe.id) || { recipe, servings: 0 };
@@ -684,3 +705,4 @@ if ('serviceWorker' in navigator) {
     .then(() => console.log('Service Worker Registered'))
     .catch((err) => console.log('SW Failed:', err));
 }
+
