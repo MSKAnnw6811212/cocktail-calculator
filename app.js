@@ -255,7 +255,10 @@ const DICT = {
         "Grapefruit": "Grapefruit",
         "Water": "Wasser",
         "Kummel": "Kümmellikör",
-        "Yellow Chartreuse": "Chartreuse Gelb"
+        "Yellow Chartreuse": "Chartreuse Gelb",
+        // --- Batch H Additions ---
+        "Butter": "Butter",
+        "Honey": "Honig"
     }
 };
 
@@ -588,6 +591,7 @@ if(printBtn) printBtn.addEventListener('click', () => {
 });
 
 initData();
+
 
 
 
