@@ -279,7 +279,13 @@ const DICT = {
         "Red Currant Syrup": "Johannisbeersirup",
         "Orange Curacao": "Orange Curaçao",
         "Irish Cream": "Irish Cream (z.B. Baileys)",
-        "White Curacao": "Weißer Curaçao"
+        "White Curacao": "Weißer Curaçao",
+        // --- Batch P Additions ---
+        "Pimm's No. 1": "Pimm's No. 1",
+        "Ketchup": "Ketchup",
+        "Vinegar": "Essig",
+        "Lillet Blanc": "Lillet Blanc",
+        "Peach": "Pfirsich"
     }
 };
 
@@ -612,6 +618,7 @@ if(printBtn) printBtn.addEventListener('click', () => {
 });
 
 initData();
+
 
 
 
