@@ -25,7 +25,10 @@
     "Soda Water": ["Sparkling Mineral Water"],
     "Prosecco": ["Sparkling Wine", "Champagne"],
     "Champagne": ["Sparkling Wine", "Prosecco"],
-    "Sparkling Wine": ["Prosecco", "Champagne"]
+    "Sparkling Wine": ["Prosecco", "Champagne"],
+    "Sloe Gin": ["Gin"],
+    "Bénédictine": ["Drambuie", "Herbal Liqueur"],
+    "Galliano": ["Herbal Liqueur"]
   },
   "generic_families": {
     "Rum (Any)": "Rum",
