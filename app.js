@@ -274,7 +274,12 @@ const DICT = {
         // --- Batch M Additions ---
         "Malibu": "Kokosrum (Malibu)",
         "Brown Rum": "Brauner Rum",
-        "Almond Syrup": "Mandelsirup"
+        "Almond Syrup": "Mandelsirup",
+        // --- Batch N & O Additions ---
+        "Red Currant Syrup": "Johannisbeersirup",
+        "Orange Curacao": "Orange Curaçao",
+        "Irish Cream": "Irish Cream (z.B. Baileys)",
+        "White Curacao": "Weißer Curaçao"
     }
 };
 
@@ -607,6 +612,7 @@ if(printBtn) printBtn.addEventListener('click', () => {
 });
 
 initData();
+
 
 
 
