@@ -1,79 +1,180 @@
 :root{
-  --bg:#f8f9fa; --card:#ffffff; --txt:#1f2937; --muted:#6b7280;
-  --primary:#2563eb; --primary-600:#1d4ed8;
-  --ok:#16a34a; --warn:#f59e0b; --fail:#dc2626; --eu:#8b5cf6; --border:#e5e7eb;
+  /* ARTISAN THEME (Matches Perfume Calculator) */
+  --bg: #f4f1ea;       /* Creamy Beige Background */
+  --card: #ffffff;     /* White Cards */
+  --txt: #2c2c2c;      /* Soft Black Text */
+  --muted: #848484;    /* Gray Text */
+  
+  --primary: #cba35c;  /* Artisan Gold/Mustard */
+  --primary-hover: #b38d4a; 
+  
+  --ok: #6c9a78;       /* Muted Green */
+  --warn: #e8bd63;     /* Muted Yellow */
+  --fail: #d9534f;     /* Soft Red */
+  --border: #e6e3dc;   /* Light Beige Border */
+
   --font-head: 'Playfair Display', serif;
   --font-body: 'Inter', system-ui, sans-serif;
+  --radius: 8px;
 }
+
 body.dark{
-  --bg:#0f172a; --card:#111827; --txt:#e5e7eb; --muted:#9ca3af;
-  --primary:#60a5fa; --primary-600:#3b82f6;
-  --ok:#22c55e; --warn:#fbbf24; --fail:#ef4444; --eu:#a78bfa; --border:#374151;
+  /* Dark Mode - Deep Espresso/Gold */
+  --bg: #1a1918; 
+  --card: #242321; 
+  --txt: #ececec; 
+  --muted: #a0a0a0;
+  --primary: #d4b06e; 
+  --primary-hover: #e5c383;
+  --ok: #6c9a78;
+  --fail: #d9534f; 
+  --border: #3a3936;
 }
+
 *{box-sizing:border-box} 
 html,body{height:100%}
 body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.5 var(--font-body)}
 
-/* Brand */
-h1, h2, h3, .brand { font-family: var(--font-head); }
-.logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
-.logo-icon { background: var(--primary); color: #fff; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 8px; }
-.logo-text { font-family: var(--font-head); font-weight: 700; font-size: 20px; color: var(--primary); letter-spacing: -0.5px; }
-h1 { margin:0; font-size: 24px; color: var(--txt); font-weight: 400; }
+/* --- BRANDING --- */
+.header {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
-.container{max-width:1100px;margin:auto;padding:16px}
-.header,.footer{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.header .brand{display:flex;flex-direction:column;align-items:flex-start;}
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
 
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
-.row{display:flex;gap:16px;flex-wrap:wrap}
-label{display:flex;flex-direction:column;gap:6px;flex:1;min-width:180px}
-label span { font-size: 13px; font-weight: 600; text-transform: uppercase; color: var(--muted); letter-spacing: 0.5px; }
+/* Logo Image Styling */
+.logo-img {
+    height: 50px;
+    width: auto;
+    border-radius: 4px; 
+}
 
-input,select{padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--card);color:var(--txt);font-size:16px;font-family:inherit;width:100%}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+h1 { 
+    margin:0; 
+    font-size: 24px; 
+    color: var(--txt); 
+    font-family: var(--font-head);
+    font-weight: 600;
+}
 
-/* Recipe Card Updates */
-.recipe{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:0;overflow:hidden; display:flex;flex-direction:column;gap:12px}
-/* Status Bar for Pantry Matches */
-.status-bar { padding: 6px 12px; font-size: 13px; font-weight: 600; text-align: center; }
-.status-bar.ok { background: var(--ok); color: #fff; }
-.status-bar.missing { background: #fee2e2; color: var(--fail); border-bottom: 1px solid var(--border); }
-body.dark .status-bar.missing { background: #450a0a; }
+/* --- LAYOUT --- */
+.container{max-width:1100px;margin:auto;padding:0 20px}
 
-.recipe h3 { font-size: 22px; margin-top: 0; padding: 0 20px; }
-.recipe .meta { padding: 0 20px; font-size:13px;color:var(--muted);font-weight:500; }
-.recipe .ingredients { margin:0 20px; font-size:15px;line-height:1.6; background:var(--bg); padding:12px; border-radius:8px;}
-.recipe .instructions { padding: 0 20px; }
+.card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    padding:25px;
+    margin-bottom:20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.row{display:flex;gap:20px;flex-wrap:wrap}
+label{display:flex;flex-direction:column;gap:8px;flex:1;min-width:180px}
+label span { font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--muted); letter-spacing: 1px; }
+
+input, select {
+    padding:12px;
+    border:1px solid var(--border);
+    border-radius: var(--radius);
+    background:var(--bg); 
+    color:var(--txt);
+    font-size:16px;
+    font-family:inherit;
+    width:100%;
+    outline: none;
+}
+input:focus, select:focus { border-color: var(--primary); }
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px; margin-bottom: 40px;}
+
+/* --- RECIPE CARDS --- */
+.recipe {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s;
+}
+.recipe:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+
+.recipe h3 { font-size: 22px; margin: 0; padding: 15px 20px 5px; }
+.recipe .meta { padding: 0 20px; font-size:13px; color:var(--muted); font-style: italic; font-family: var(--font-head); }
+.recipe .ingredients { 
+    margin: 15px 20px; 
+    padding: 15px; 
+    background: var(--bg); 
+    border-radius: var(--radius);
+    font-size: 15px;
+    line-height: 1.6;
+}
+.recipe .instructions { padding: 0 20px 20px; font-style: italic; color: var(--txt); }
 .recipe button.primary { margin: 20px; margin-top: auto; }
 
-/* Improved Pantry Layout */
+/* Status Badges */
+.status-bar { padding: 8px; font-size: 13px; font-weight: 600; text-align: center; letter-spacing: 0.5px; }
+.status-bar.ok { background: var(--ok); color: #fff; }
+.status-bar.missing { background: #fceceb; color: var(--fail); border-bottom: 1px solid var(--border); }
+body.dark .status-bar.missing { background: #451e1e; }
+
+/* --- PANTRY --- */
 .pantry-group { margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
 .pantry-group:last-child { border-bottom: none; }
-.pantry-group strong { display: block; margin-bottom: 10px; color: var(--primary); font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
-.pantry-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px 12px; }
+.pantry-group strong { display: block; margin-bottom: 10px; color: var(--primary); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+.pantry-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
 .pantry-item { 
-    flex-direction: row; align-items: center; gap: 8px; font-size: 14px; cursor: pointer; 
-    padding: 6px; border-radius: 6px; border: 1px solid transparent; 
+    flex-direction: row; align-items: center; gap: 10px; font-size: 14px; cursor: pointer; 
+    padding: 8px; border-radius: 4px; border: 1px solid transparent; 
 }
 .pantry-item:hover { background: var(--bg); border-color: var(--border); }
-.pantry-item input { margin: 0; width: auto; } /* Fix checkbox size */
+.pantry-item input { margin: 0; width: 18px; height: 18px; accent-color: var(--primary); }
 
-.qty{font-variant-numeric:tabular-nums;font-weight:600;color:var(--primary)}
-button.primary{background:var(--primary);color:#fff;border:0;border-radius:8px;padding:8px 16px;cursor:pointer;font-weight:600;font-family:var(--font-body);}
-button.link{background:transparent;border:0;color:var(--primary);cursor:pointer}
+/* --- BUTTONS & TABLES --- */
+button.primary {
+    background: var(--primary);
+    color: #fff;
+    border: 0;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-family: var(--font-body);
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 1px;
+    transition: background 0.2s;
+}
+button.primary:hover { background: var(--primary-hover); }
+
+button.link { background:transparent; border:0; color:var(--fail); cursor:pointer; text-decoration: underline; }
 
 .bb-table{width:100%;border-collapse:collapse;margin-top:10px}
-.bb-table th,.bb-table td{border:1px solid var(--border);padding:10px;text-align:left}
-.bb-table th { background: var(--bg); font-weight:600; font-size:14px; }
-.bb-chip{display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:16px;padding:4px 12px;margin:0 6px 6px 0;font-size:14px}
+.bb-table th,.bb-table td{border:1px solid var(--border);padding:12px;text-align:left}
+.bb-table th { background: var(--bg); font-weight:600; font-size:13px; text-transform: uppercase; color: var(--muted); }
+.bb-chip{display:inline-block;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:5px 12px;margin:0 6px 6px 0;font-size:14px}
 
-.checkbox-row { display: flex; gap: 20px; align-items: center; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); }
-.check-label { flex-direction: row; align-items: center; min-width: auto; text-transform: none; color: var(--txt); }
-.check-label span { text-transform: none; }
+.checkbox-row { display: flex; gap: 20px; align-items: center; margin-top:20px; padding-top:20px; border-top:1px solid var(--border); }
+.check-label { flex-direction: row; align-items: center; min-width: auto; text-transform: none; color: var(--txt); font-weight: 400; }
+.check-label span { text-transform: none; font-weight: 400; color: var(--txt); font-size: 15px; letter-spacing: 0; }
+.check-label input { width: 18px; height: 18px; accent-color: var(--primary); }
 
 .clear-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: transparent; border: none; font-size: 20px; color: var(--muted); cursor: pointer; padding: 0 5px; }
 .clear-btn:hover { color: var(--fail); }
+
+.qty{font-variant-numeric:tabular-nums;font-weight:700;color:var(--primary)}
 
 @media print {
   body{background:#fff;color:#000}
