@@ -248,7 +248,14 @@ const DICT = {
         "Pousse-Café": "Pousse-Café (geschichtet)",
         "Kirschwasser": "Kirschwasser",
         "Sweet Sherry": "Süßer Sherry (Cream)",
-        "Pernod": "Pernod"
+        "Pernod": "Pernod",
+        // --- Batch G Additions ---
+        "Pearl Onion": "Silberzwiebel",
+        "Green Crème de Menthe": "Pfefferminzlikör (Grün)",
+        "Grapefruit": "Grapefruit",
+        "Water": "Wasser",
+        "Kummel": "Kümmellikör",
+        "Yellow Chartreuse": "Chartreuse Gelb"
     }
 };
 
@@ -581,6 +588,7 @@ if(printBtn) printBtn.addEventListener('click', () => {
 });
 
 initData();
+
 
 
 
