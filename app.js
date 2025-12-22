@@ -227,7 +227,13 @@ const DICT = {
         "Raki": "Raki",
         "Melon Liqueur": "Melonenlikör",
         "Ginger": "Ingwer",
-        "Cucumber": "Gurke"
+        "Cucumber": "Gurke",
+        // --- Batch D Additions ---
+        "Goldwasser": "Danziger Goldwasser",
+        "Peach Bitters": "Pfirsich-Bitter",
+        "Cold Black Tea": "Kalter Schwarztee",
+        "Genever": "Genever",
+        "Curacao Orange": "Curaçao Orange"
     }
 };
 
@@ -560,6 +566,7 @@ if(printBtn) printBtn.addEventListener('click', () => {
 });
 
 initData();
+
 
 
 
